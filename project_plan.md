@@ -18,12 +18,22 @@
 - 배포: 웹은 git push → Cloudflare 자동. 토스는 빌드 → 토스 콘솔 업로드.
 
 ## 기능 요구사항
-1. **튜토리얼 제공**: 단계별 미술 강의 (기초, 중급, 고급).
-2. **AI 피드백**: 사용자가 업로드한 그림을 AI (Claude, Gemini)로 분석 및 피드백 제공.
+1. **튜토리얼 제공**: 단계별 미술 강의 (기초, 중급, 고급). 멘토별 이미지/영상 업로드 지원.
+2. **AI 피드백**: 사용자가 업로드한 그림을 AI (Claude 1순위, OpenAI 폴백)로 분석 및 피드백 제공.
 3. **커뮤니티**: 사용자 작품 공유, 댓글, 좋아요 기능.
 4. **결제 시스템**: 토스페이 연동 (유료 콘텐츠 구매).
 5. **로그인**: 토스 로그인 연동.
 6. **광고**: 무료 콘텐츠에 광고 삽입.
+7. **데이터베이스**: Supabase 연동 (멘토 콘텐츠, 사용자 데이터 저장).
+
+## 환경변수 (Cloudflare Pages 등록)
+- **ANTHROPIC_API_KEY**: Claude API (AI 그림 분석 1순위)
+- **OPENAI_API_KEY**: OpenAI API (Claude 실패 시 폴백)
+- **GEMINI_API_KEY**: Gemini API (이미지 생성)
+- **TOSS_LOGIN_DECRYPT_KEY**: 토스 로그인 복호화 키
+- **TOSS_PAY_SECRET_KEY**: 토스페이 시크릿 키
+- **SUPABASE_URL**: Supabase 프로젝트 URL
+- **SUPABASE_ANON_KEY**: Supabase 익명 키
 
 ## 개발 단계 계획
 ### Phase 1: 기초 구축 (완료)
