@@ -59,7 +59,11 @@ export async function onRequestPost(context) {
 3. (세 번째 개선점)
 
 **지금 바로 할 수 있는 연습**
-(초보자가 오늘 당장 실천할 수 있는 구체적 방법 1~2가지)`,
+(초보자가 오늘 당장 실천할 수 있는 구체적 방법 1~2가지)
+
+마지막 줄에 반드시 아래 형식으로 이 그림의 약점 개선에 도움이 될 YouTube 검색 키워드 3개를 추가해 주세요. 한국어로 실제 유튜브에서 검색했을 때 좋은 강좌가 나올 만한 구체적인 검색어를 써주세요:
+[검색키워드: 키워드1|키워드2|키워드3]
+(예시: [검색키워드: 기초 드로잉 선 연습|인물화 얼굴 비례 잡기|명암 표현 방법])`,
                             },
                         ],
                     },
@@ -77,7 +81,7 @@ export async function onRequestPost(context) {
         }
 
         const anthropicData = await anthropicRes.json();
-        const feedback = anthropicData.content?.[0]?.text;
+        let feedback = anthropicData.content?.[0]?.text;
 
         if (!feedback) {
             return new Response(JSON.stringify({ error: '분석 결과를 가져올 수 없습니다.' }), {
@@ -86,7 +90,15 @@ export async function onRequestPost(context) {
             });
         }
 
-        return new Response(JSON.stringify({ feedback }), { headers: corsHeaders });
+        // YouTube 검색 키워드 파싱
+        let keywords = [];
+        const keywordMatch = feedback.match(/\[검색키워드:\s*(.+?)\]/);
+        if (keywordMatch) {
+            keywords = keywordMatch[1].split('|').map(k => k.trim()).filter(Boolean);
+            feedback = feedback.replace(/\[검색키워드:[^\]]+\]\s*$/, '').trimEnd();
+        }
+
+        return new Response(JSON.stringify({ feedback, keywords }), { headers: corsHeaders });
 
     } catch (err) {
         console.error('analyze function error:', err);
