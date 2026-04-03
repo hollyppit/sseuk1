@@ -509,11 +509,239 @@
         }
 
         
+        /* ===== AI 분석 섹션 ===== */
+        .section-analyze {
+            padding: var(--section-pad);
+            position: relative;
+            z-index: 10;
+            background: #0d0d1a;
+        }
+
+        .analyze-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--grid-gap);
+            margin-top: 2rem;
+        }
+
+        .upload-side { display: flex; flex-direction: column; gap: 1rem; }
+
+        .upload-zone {
+            border: 2px dashed rgba(0, 212, 255, 0.5);
+            background: rgba(0, 212, 255, 0.02);
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer !important;
+            transition: border-color 0.2s, background 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-zone:hover { border-color: var(--cyan); background: rgba(0, 212, 255, 0.05); }
+        .upload-zone.dragging { border-color: var(--magenta); background: rgba(255, 0, 127, 0.05); border-style: solid; }
+        .upload-zone.has-image { border-color: var(--magenta); border-style: solid; }
+
+        .upload-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            pointer-events: none;
+        }
+
+        .upload-icon-svg {
+            width: 64px;
+            height: 64px;
+            stroke: var(--cyan);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .upload-text-main {
+            font-family: var(--font-tech);
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            line-height: 1.6;
+        }
+
+        .upload-text-hint {
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            display: none;
+            padding: 0.5rem;
+        }
+
+        .upload-reselect {
+            position: absolute;
+            bottom: 0.75rem;
+            right: 0.75rem;
+            font-family: var(--font-tech);
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            pointer-events: none;
+            display: none;
+        }
+
+        .upload-zone.has-image .upload-reselect { display: block; }
+
+        .analyze-btn {
+            display: block;
+            width: 100%;
+            font-family: var(--font-tech);
+            font-weight: 800;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 1.2rem;
+            background: var(--white);
+            color: var(--black);
+            border: 2px solid var(--white);
+            cursor: pointer !important;
+            transition: all 0.1s steps(2);
+            position: relative;
+        }
+
+        .analyze-btn::after {
+            content: '';
+            position: absolute;
+            top: 5px; left: 5px;
+            width: 100%; height: 100%;
+            background: var(--magenta);
+            z-index: -1;
+            transition: all 0.1s steps(2);
+        }
+
+        .analyze-btn:hover:not(:disabled) { background: var(--cyan); border-color: var(--cyan); transform: translate(3px, 3px); }
+        .analyze-btn:hover:not(:disabled)::after { top: 0; left: 0; }
+        .analyze-btn:disabled { opacity: 0.3; cursor: not-allowed !important; }
+        .analyze-btn.loading { background: var(--magenta); border-color: var(--magenta); color: var(--white); }
+
+        /* 채팅 창 */
+        .chat-window {
+            background: #000;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            min-height: 420px;
+            max-height: 600px;
+        }
+
+        .chat-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--cyan);
+            flex-shrink: 0;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--magenta);
+            animation: blink 1.5s infinite;
+        }
+
+        .status-dot.active { background: #00ff88; animation: none; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0,212,255,0.3) transparent;
+        }
+
+        .chat-idle {
+            color: rgba(255,255,255,0.25);
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            text-align: center;
+            margin: auto;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            line-height: 2;
+        }
+
+        .chat-msg {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .msg-label {
+            font-family: var(--font-tech);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--cyan);
+        }
+
+        .chat-msg.user-msg .msg-label { color: rgba(255,255,255,0.4); }
+
+        .msg-content {
+            font-family: var(--font-kr);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .msg-content strong { color: var(--cyan); font-weight: 700; }
+        .msg-content .section-title-inline { color: var(--magenta); font-family: var(--font-tech); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-top: 0.75rem; margin-bottom: 0.25rem; }
+
+        .typing-dots span {
+            display: inline-block;
+            animation: dot-pulse 1.2s infinite;
+            font-family: var(--font-tech);
+            font-size: 1.2rem;
+            color: var(--cyan);
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dot-pulse {
+            0%, 80%, 100% { opacity: 0.2; }
+            40% { opacity: 1; }
+        }
+
+        .chat-msg.error-msg .msg-content { color: var(--magenta); }
+
+        /* ===== 반응형 ===== */
         @media (max-width: 1024px) {
             .hero-typographic-cluster { width: 100%; }
             .subject-container { width: 60vw; opacity: 0.5; z-index: 0; right: -10vw; }
             .grid-2col { grid-template-columns: 1fr; }
             .cards-grid { grid-template-columns: 1fr 1fr; }
+            .analyze-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
@@ -522,6 +750,8 @@
             .mega-title { font-size: 4rem; }
             .cards-grid { grid-template-columns: 1fr; }
             .section-header { flex-direction: column; align-items: flex-start; }
+            .analyze-grid { grid-template-columns: 1fr; }
+            .chat-window { min-height: 350px; }
         }
     </style>
 </head>
@@ -583,7 +813,7 @@
                 
                 <div class="hero-desc" vid="44">
                     <p vid="45">AI와 함께하는 맞춤형 미술 교육. 초보자부터 전문가까지, 당신의 예술적 잠재력을 깨워보세요.</p>
-                    <a href="#diagnostic" class="btn" vid="46">시작하기_</a>
+                    <a href="#analyze" class="btn" vid="46">그림 분석 시작_</a>
                 </div>
             </div>
 
@@ -607,7 +837,48 @@
             </div>
         </section>
 
-        
+        <!-- ===== AI 그림 분석 섹션 ===== -->
+        <section id="analyze" class="section-analyze">
+            <div class="sys-label">Module_00: AI Art Feedback</div>
+            <h2 class="section-title" style="font-family: var(--font-display); font-size: 3rem; margin-bottom: 0.5rem;">그림 올리면<br>AI가 봐준다</h2>
+            <p style="font-family: var(--font-tech); font-size: 0.8rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em;">Upload your artwork → Get AI feedback on improvements</p>
+
+            <div class="analyze-grid">
+                <!-- 업로드 영역 -->
+                <div class="upload-side">
+                    <div class="upload-zone" id="uploadZone">
+                        <input type="file" id="fileInput" accept="image/*" style="display:none">
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <svg class="upload-icon-svg" viewBox="0 0 64 64">
+                                <rect x="8" y="8" width="48" height="48" rx="2"/>
+                                <line x1="32" y1="20" x2="32" y2="44"/>
+                                <line x1="20" y1="32" x2="44" y2="32"/>
+                                <circle cx="20" cy="20" r="4" fill="currentColor" stroke="none" style="fill:rgba(0,212,255,0.3)"/>
+                            </svg>
+                            <div class="upload-text-main">그림을 여기에 드롭하거나<br>클릭해서 업로드</div>
+                            <div class="upload-text-hint">JPG · PNG · WEBP · GIF · 최대 10MB</div>
+                        </div>
+                        <img class="preview-img" id="previewImg" alt="업로드한 그림">
+                        <span class="upload-reselect">클릭해서 다시 선택</span>
+                    </div>
+                    <button class="analyze-btn" id="analyzeBtn" disabled>AI 분석 시작_</button>
+                </div>
+
+                <!-- AI 채팅 창 -->
+                <div class="chat-window">
+                    <div class="chat-header">
+                        <span class="status-dot" id="statusDot"></span>
+                        <span>SSEUK.AI // ART FEEDBACK SYSTEM v1.0</span>
+                    </div>
+                    <div class="chat-body" id="chatBody">
+                        <div class="chat-idle" id="chatIdle">
+                            그림을 업로드하고<br>분석 버튼을 누르면<br>AI 피드백이 여기 표시됩니다
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <div class="ticker-wrap" vid="57">
             <div class="ticker" vid="58">
                 /// AWAKEN YOUR CREATIVITY <span vid="59">*</span> AI ART ANALYSIS <span vid="60">*</span> SKILL DEVELOPMENT SYSTEM <span vid="61">*</span> SSEUK ART ACADEMY <span vid="62">*</span> AI와 함께하는 미술 학습 /// AWAKEN YOUR CREATIVITY <span vid="63">*</span> AI ART ANALYSIS <span vid="64">*</span> SKILL DEVELOPMENT SYSTEM <span vid="65">*</span> SSEUK ART ACADEMY <span vid="66">*</span> AI와 함께하는 미술 학습
@@ -695,5 +966,138 @@
 
     </main>
 
+<script>
+(function () {
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    const previewImg = document.getElementById('previewImg');
+    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const chatBody = document.getElementById('chatBody');
+    const chatIdle = document.getElementById('chatIdle');
+    const statusDot = document.getElementById('statusDot');
 
+    let currentImageBase64 = null;
+    let currentMimeType = 'image/jpeg';
+
+    // 클릭으로 파일 선택
+    uploadZone.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files[0]) processFile(e.target.files[0]);
+    });
+
+    // 드래그 앤 드롭
+    uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('dragging');
+    });
+    uploadZone.addEventListener('dragleave', (e) => {
+        if (!uploadZone.contains(e.relatedTarget)) {
+            uploadZone.classList.remove('dragging');
+        }
+    });
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragging');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) processFile(file);
+    });
+
+    function processFile(file) {
+        if (file.size > 10 * 1024 * 1024) {
+            alert('파일 크기가 10MB를 초과합니다. 더 작은 이미지를 사용해 주세요.');
+            return;
+        }
+        currentMimeType = file.type || 'image/jpeg';
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const dataUrl = e.target.result;
+            currentImageBase64 = dataUrl.split(',')[1];
+            previewImg.src = dataUrl;
+            previewImg.style.display = 'block';
+            uploadPlaceholder.style.display = 'none';
+            uploadZone.classList.add('has-image');
+            analyzeBtn.disabled = false;
+            analyzeBtn.textContent = 'AI 분석 시작_';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    analyzeBtn.addEventListener('click', async () => {
+        if (!currentImageBase64) return;
+
+        analyzeBtn.disabled = true;
+        analyzeBtn.classList.add('loading');
+        analyzeBtn.textContent = '분석 중...';
+        statusDot.classList.remove('active');
+
+        // 채팅창 초기화
+        chatBody.innerHTML = '';
+
+        // 사용자 메시지
+        appendMsg('YOU', '그림 분석을 요청했습니다.', 'user-msg');
+
+        // 로딩 메시지
+        const thinkingEl = appendMsg('SSEUK.AI', '', 'ai-msg');
+        thinkingEl.querySelector('.msg-content').innerHTML = '<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>';
+
+        try {
+            const res = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: currentImageBase64, mimeType: currentMimeType })
+            });
+
+            const data = await res.json();
+            thinkingEl.remove();
+
+            if (!res.ok || data.error) throw new Error(data.error || '분석 실패');
+
+            statusDot.classList.add('active');
+            const aiEl = appendMsg('SSEUK.AI', '', 'ai-msg');
+            const contentEl = aiEl.querySelector('.msg-content');
+            typewriter(contentEl, data.feedback || '분석 결과를 가져올 수 없습니다.');
+
+        } catch (err) {
+            thinkingEl && thinkingEl.remove();
+            appendMsg('ERROR', '분석에 실패했습니다. 다시 시도해 주세요.\n(' + err.message + ')', 'error-msg');
+        } finally {
+            analyzeBtn.disabled = false;
+            analyzeBtn.classList.remove('loading');
+            analyzeBtn.textContent = '다시 분석_';
+        }
+    });
+
+    function appendMsg(label, text, className) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg ' + className;
+        div.innerHTML = '<span class="msg-label">' + label + '</span><div class="msg-content">' + escapeHtml(text).replace(/\n/g, '<br>') + '</div>';
+        chatBody.appendChild(div);
+        chatBody.scrollTop = chatBody.scrollHeight;
+        return div;
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function formatFeedback(text) {
+        // **굵게** → <strong>
+        return text
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+    }
+
+    function typewriter(el, text, i, speed) {
+        i = i || 0;
+        speed = speed || 12;
+        if (i < text.length) {
+            el.innerHTML = formatFeedback(text.slice(0, i + 1));
+            chatBody.scrollTop = chatBody.scrollHeight;
+            setTimeout(() => typewriter(el, text, i + 1, speed), speed);
+        }
+    }
+})();
+</script>
 </body></html>
