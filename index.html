@@ -903,6 +903,46 @@
             .video-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
+        /* ===== 카테고리 영상 패널 ===== */
+        .category-card { cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+        .category-card.active { border-color: var(--cyan) !important; background: rgba(0,212,255,0.06) !important; }
+
+        #categoryVideoPanel {
+            display: none;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            padding-top: 1.5rem;
+        }
+        #categoryVideoPanel.visible { display: block; }
+
+        .cat-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .cat-panel-close {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.6);
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            padding: 0.3em 0.8em;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .cat-panel-close:hover { border-color: var(--magenta); color: var(--magenta); }
+
+        .cat-video-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        @media (max-width: 768px) { .cat-video-grid { grid-template-columns: 1fr; } }
+        @media (min-width: 769px) and (max-width: 1024px) { .cat-video-grid { grid-template-columns: repeat(2, 1fr); } }
+
         /* ===== 반응형 ===== */
         @media (max-width: 1024px) {
             .hero-typographic-cluster { width: 100%; }
@@ -1070,52 +1110,64 @@
                 </div>
                 <div style="font-family: var(--font-tech); text-align:right; font-size: 0.85rem;">
                     <div>관심 분야를 선택하면</div>
-                    <div style="color: var(--cyan);">YouTube로 바로 연결됩니다_</div>
+                    <div style="color: var(--cyan);">영상을 바로 재생합니다_</div>
                 </div>
             </div>
 
             <div class="cards-grid" style="grid-template-columns: repeat(3, 1fr);">
-                <a class="solution-card" href="https://www.youtube.com/results?search_query=미술+기초+드로잉+강좌" target="_blank" rel="noopener" style="text-decoration:none; display:block;">
+                <div class="solution-card category-card" data-keywords='["미술 기초 드로잉 강좌","선과 형태 그리기 기초","비례 드로잉 입문"]'>
                     <div class="card-num">01</div>
                     <div class="sys-label">FOUNDATION</div>
                     <h3 class="card-title">기초 드로잉</h3>
                     <p class="card-desc">선, 형태, 비례의 기본기. 처음 그림을 시작하는 분께 가장 먼저 필요한 영역입니다.</p>
-                </a>
+                </div>
 
-                <a class="solution-card" href="https://www.youtube.com/results?search_query=명암+표현+드로잉+강좌" target="_blank" rel="noopener" style="text-decoration:none; display:block;">
+                <div class="solution-card category-card" data-keywords='["명암 표현 드로잉 강좌","빛과 그림자 그리기","입체감 표현 기법"]'>
                     <div class="card-num">02</div>
                     <div class="sys-label">SHADING</div>
                     <h3 class="card-title">명암과 입체감</h3>
                     <p class="card-desc">빛과 그림자를 이해하면 그림이 살아납니다. 2D 선에서 3D 입체로 넘어가는 핵심 단계입니다.</p>
-                </a>
+                </div>
 
-                <a class="solution-card" href="https://www.youtube.com/results?search_query=인물화+그리기+비례+강좌" target="_blank" rel="noopener" style="text-decoration:none; display:block;">
+                <div class="solution-card category-card" data-keywords='["인물화 그리기 비례 강좌","얼굴 그리기 비례","인체 동세 드로잉"]'>
                     <div class="card-num">03</div>
                     <div class="sys-label">FIGURE</div>
                     <h3 class="card-title">인물화 & 비례</h3>
                     <p class="card-desc">얼굴, 신체 비례와 동세 표현. 인물 그리기에서 가장 많이 막히는 부분을 집중 공략합니다.</p>
-                </a>
+                </div>
 
-                <a class="solution-card" href="https://www.youtube.com/results?search_query=채색+기법+미술+강좌" target="_blank" rel="noopener" style="text-decoration:none; display:block;">
+                <div class="solution-card category-card" data-keywords='["채색 기법 미술 강좌","수채화 채색법","디지털 채색 기법"]'>
                     <div class="card-num">04</div>
                     <div class="sys-label">COLOR</div>
                     <h3 class="card-title">색채와 채색</h3>
                     <p class="card-desc">색감 이론부터 실전 채색 기법까지. 수채화, 디지털, 마커 등 다양한 매체의 채색법을 찾아보세요.</p>
-                </a>
+                </div>
 
-                <a class="solution-card" href="https://www.youtube.com/results?search_query=구도+원근법+미술+강좌" target="_blank" rel="noopener" style="text-decoration:none; display:block;">
+                <div class="solution-card category-card" data-keywords='["구도 원근법 미술 강좌","배경 풍경 그리기","공간감 원근법 기초"]'>
                     <div class="card-num">05</div>
                     <div class="sys-label">COMPOSITION</div>
                     <h3 class="card-title">구도와 원근법</h3>
                     <p class="card-desc">그림의 배치와 공간감을 만드는 원리. 배경과 풍경 그리기의 핵심 기초입니다.</p>
-                </a>
+                </div>
 
-                <a class="solution-card" href="https://www.youtube.com/results?search_query=디지털+드로잉+입문+강좌" target="_blank" rel="noopener" style="text-decoration:none; display:block;">
+                <div class="solution-card category-card" data-keywords='["디지털 드로잉 입문 강좌","클립스튜디오 기초","프로크리에이트 입문"]'>
                     <div class="card-num">06</div>
                     <div class="sys-label">DIGITAL</div>
                     <h3 class="card-title">디지털 드로잉</h3>
                     <p class="card-desc">태블릿과 디지털 툴로 그림 그리기. 클립스튜디오, 프로크리에이트 등 입문부터 활용까지 찾아보세요.</p>
-                </a>
+                </div>
+            </div>
+
+            <!-- 카테고리 영상 패널 -->
+            <div id="categoryVideoPanel">
+                <div class="cat-panel-header">
+                    <div>
+                        <div class="sys-label">관련 학습 영상</div>
+                        <div id="catPanelTitle" style="font-family: var(--font-kr); font-size: 1.1rem; font-weight: 700; color: var(--cyan); margin-top: 0.25rem;"></div>
+                    </div>
+                    <button class="cat-panel-close" id="catPanelClose">✕ 닫기</button>
+                </div>
+                <div class="cat-video-grid" id="catVideoGrid"></div>
             </div>
         </section>
 
@@ -1341,6 +1393,117 @@
             chatBody.scrollTop = chatBody.scrollHeight;
             setTimeout(() => typewriter(el, text, i + 1, speed), speed);
         }
+    }
+
+    // ===== 카테고리 영상 패널 =====
+    const categoryCards = document.querySelectorAll('.category-card');
+    const categoryVideoPanel = document.getElementById('categoryVideoPanel');
+    const catPanelTitle = document.getElementById('catPanelTitle');
+    const catVideoGrid = document.getElementById('catVideoGrid');
+
+    categoryCards.forEach(function(card) {
+        card.addEventListener('click', async function() {
+            const keywords = JSON.parse(card.dataset.keywords);
+            const label = card.querySelector('.card-title').textContent;
+
+            if (card.classList.contains('active')) {
+                card.classList.remove('active');
+                categoryVideoPanel.classList.remove('visible');
+                return;
+            }
+
+            categoryCards.forEach(function(c) { c.classList.remove('active'); });
+            card.classList.add('active');
+
+            catPanelTitle.textContent = label;
+            catVideoGrid.innerHTML = '<div style="color:var(--cyan);font-family:var(--font-tech);font-size:0.85rem;padding:1rem 0;letter-spacing:0.08em;">LOADING VIDEOS...</div>';
+            categoryVideoPanel.classList.add('visible');
+            setTimeout(function() { categoryVideoPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+
+            try {
+                const res = await fetch('/api/youtube', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ keywords: keywords }),
+                });
+                const data = await res.json();
+                catVideoGrid.innerHTML = '';
+
+                if (!data.videos || data.videos.length === 0) {
+                    catVideoGrid.innerHTML = '<div style="color:rgba(255,255,255,0.5);font-family:var(--font-tech);font-size:0.8rem;">영상을 찾을 수 없습니다.</div>';
+                    return;
+                }
+
+                data.videos.forEach(function(video) { renderCatVideoCard(video); });
+            } catch (err) {
+                catVideoGrid.innerHTML = '<div style="color:var(--magenta);font-family:var(--font-tech);font-size:0.8rem;">오류가 발생했습니다. 다시 시도해 주세요.</div>';
+            }
+        });
+    });
+
+    document.getElementById('catPanelClose').addEventListener('click', function() {
+        categoryVideoPanel.classList.remove('visible');
+        categoryCards.forEach(function(c) { c.classList.remove('active'); });
+    });
+
+    function renderCatVideoCard(video) {
+        var card = document.createElement('div');
+        card.className = 'video-card';
+
+        var thumbWrap = document.createElement('div');
+        thumbWrap.className = 'video-thumb-wrap';
+
+        var img = document.createElement('img');
+        img.className = 'video-thumb';
+        img.src = video.thumbnail;
+        img.alt = video.title;
+        img.loading = 'lazy';
+
+        var playBtn = document.createElement('div');
+        playBtn.className = 'video-play-btn';
+        playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+
+        var tag = document.createElement('div');
+        tag.className = 'video-keyword-tag';
+        tag.textContent = video.keyword;
+
+        thumbWrap.appendChild(img);
+        thumbWrap.appendChild(playBtn);
+        thumbWrap.appendChild(tag);
+
+        var info = document.createElement('div');
+        info.className = 'video-info';
+        info.innerHTML = '<div class="video-title">' + escapeHtml(video.title) + '</div>'
+            + '<div class="video-channel">' + escapeHtml(video.channel) + '</div>';
+
+        var iframeWrap = document.createElement('div');
+        iframeWrap.className = 'video-iframe-wrap';
+
+        card.appendChild(thumbWrap);
+        card.appendChild(info);
+        card.appendChild(iframeWrap);
+        catVideoGrid.appendChild(card);
+
+        thumbWrap.addEventListener('click', function() {
+            if (iframeWrap.classList.contains('active')) return;
+
+            catVideoGrid.querySelectorAll('.video-iframe-wrap.active').forEach(function(el) {
+                el.classList.remove('active');
+                el.innerHTML = '';
+            });
+
+            iframeWrap.innerHTML = '<button class="video-close-btn">✕ 닫기</button>'
+                + '<iframe src="https://www.youtube.com/embed/' + video.videoId + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+            iframeWrap.classList.add('active');
+
+            iframeWrap.querySelector('.video-close-btn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                iframeWrap.classList.remove('active');
+                iframeWrap.innerHTML = '';
+            });
+
+            setTimeout(function() { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
+        });
     }
 })();
 </script>
