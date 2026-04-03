@@ -37,7 +37,23 @@ input,textarea{font-family:inherit;outline:none;border:none;background:none;}
 ::-webkit-scrollbar-track{background:var(--bg-solid);}
 ::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px;}
 
-.app{display:flex;height:100vh;}
+.app{display:flex;min-height:100vh;}
+
+.hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px 38px;gap:16px;background:linear-gradient(210deg, rgba(18,20,31,0.95), rgba(69,28,128,0.76));color:#fff;}
+.hero::after{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;opacity:0.25;filter:blur(3px);}
+.hero *{position:relative;z-index:2;}
+.hero-title{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.8rem, 3.2vw, 2.8rem);line-height:1.1;letter-spacing:0.01em;}
+.hero-subtitle{font-size:clamp(0.9rem, 1.1vw, 1.1rem);max-width:760px;margin:0 auto;color:rgba(255,255,255,0.92);}
+.hero-search{width:min(760px,90%);display:flex;align-items:center;gap:8px;}
+.hero-search input{flex:1;height:46px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.7);background:rgba(255,255,255,0.18);color:#fff;font-size:0.95rem;outline:none;}
+.hero-search input::placeholder{color:rgba(255,255,255,0.7);}
+.hero-search button{background:linear-gradient(135deg, #ff6a3f, #ffbd70);color:#2b2b2b;font-weight:700;border-radius:999px;border:none;padding:0 18px;height:46px;cursor:pointer;box-shadow:0 10px 20px rgba(0, 0, 0,0.2);}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.hero-tag{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.45);font-size:0.75rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.hero-tag:hover{transform:translateY(-2px);background:rgba(255,255,255,0.26);}
+
+@keyframes fadeInUp{0%{opacity:0;transform:translateY(12px);}100%{opacity:1;transform:translateY(0);}}
+.fade-in-up{animation:fadeInUp 0.9s ease forwards;opacity:0;}
 
 /* SIDEBAR */
 .sidebar{width:250px;min-width:250px;background:linear-gradient(180deg, #ff7a50 0%, #ffd1b5 100%);display:flex;flex-direction:column;z-index:10;border-radius:0 30px 30px 0;box-shadow:var(--shadow);}
