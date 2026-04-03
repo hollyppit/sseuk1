@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSEUK — 미술 연습 솔루션</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: linear-gradient(135deg, #fff2e8 0%, #fefae6 45%, #ffe0d5 100%);
+  --bg-solid: #fff5ec;
+  --white: #ffffff;
+  --black: #2b2b2b;
+  --primary: #ff6f3c;
+  --secondary: #06b6d4;
+  --accent: #fbbf24;
+  --tertiary: #f472b6;
+  --neutral: #ffe9e0;
+  --text: #2f2d2a;
+  --text2: #5b5853;
+  --text3: #837f7a;
+  --radius: 22px;
+  --radius-sm: 12px;
+  --shadow: 0 10px 18px rgba(34, 34, 34, 0.12);
+  --shadow-sm: 0 6px 12px rgba(34, 34, 34, 0.1);
+  --shadow-lg: 0 14px 28px rgba(34, 34, 34, 0.18);
+  --border: 2px solid rgba(43, 43, 43, 0.25);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:15px;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-weight:400;line-height:1.6;min-height:100vh;overflow-x:hidden;background-repeat:no-repeat;background-size:cover;}
+h1,h2,h3,h4,h5,h6,.logo-text,.welcome-title{font-family:'Dancing Script',cursive;}
+
+button{cursor:pointer;border:none;outline:none;font-family:inherit;}
+input,textarea{font-family:inherit;outline:none;border:none;background:none;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg-solid);}
+::-webkit-scrollbar-thumb{background:var(--primary);border-radius:3px;}
+
+.app{display:flex;min-height:100vh;}
+
+.hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px 38px;gap:16px;background:linear-gradient(210deg, rgba(18,20,31,0.95), rgba(69,28,128,0.76));color:#fff;}
+.hero::after{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;opacity:0.25;filter:blur(3px);}
+.hero *{position:relative;z-index:2;}
+.hero-title{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.8rem, 3.2vw, 2.8rem);line-height:1.1;letter-spacing:0.01em;}
+.hero-subtitle{font-size:clamp(0.9rem, 1.1vw, 1.1rem);max-width:760px;margin:0 auto;color:rgba(255,255,255,0.92);}
+.hero-search{width:min(760px,90%);display:flex;align-items:center;gap:8px;}
+.hero-search input{flex:1;height:46px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.7);background:rgba(255,255,255,0.18);color:#fff;font-size:0.95rem;outline:none;}
+.hero-search input::placeholder{color:rgba(255,255,255,0.7);}
+.hero-search button{background:linear-gradient(135deg, #ff6a3f, #ffbd70);color:#2b2b2b;font-weight:700;border-radius:999px;border:none;padding:0 18px;height:46px;cursor:pointer;box-shadow:0 10px 20px rgba(0, 0, 0,0.2);}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.hero-tag{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.45);font-size:0.75rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.hero-tag:hover{transform:translateY(-2px);background:rgba(255,255,255,0.26);}
+
+@keyframes fadeInUp{0%{opacity:0;transform:translateY(12px);}100%{opacity:1;transform:translateY(0);}}
+.fade-in-up{animation:fadeInUp 0.9s ease forwards;opacity:0;}
+
+/* SIDEBAR */
+.sidebar{width:250px;min-width:250px;background:linear-gradient(180deg, #ff7a50 0%, #ffd1b5 100%);display:flex;flex-direction:column;z-index:10;border-radius:0 30px 30px 0;box-shadow:var(--shadow);}
+.logo{padding:28px 22px 22px;border-bottom:2px dashed rgba(0,0,0,0.15);background:rgba(255,255,255,0.2);}
+.logo-text{font-family:'Dancing Script',cursive;font-size:2.4rem;color:#ffffff;letter-spacing:0.03em;line-height:1;text-shadow:3px 3px 0 rgba(0,0,0,0.2);}
+.logo-sub{font-size:0.65rem;color:var(--accent);margin-top:5px;letter-spacing:0.12em;text-transform:uppercase;font-weight:500;}
+.nav{flex:1;padding:20px 14px;display:flex;flex-direction:column;gap:6px;}
+.nav-section{font-size:0.6rem;color:#3d5a3d;letter-spacing:0.15em;text-transform:uppercase;padding:14px 8px 6px;font-weight:700;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:var(--radius-sm);font-size:0.85rem;color:#ffffff;cursor:pointer;transition:all 0.15s;font-weight:500;border:2px solid transparent;background:rgba(255,255,255,0.1);}
+.nav-item:hover{background:rgba(255,255,255,0.2);color:var(--white);}
+.nav-item.active{background:var(--tertiary);color:var(--black);border-color:var(--black);box-shadow:var(--shadow-sm);}
+.nav-icon{font-size:1rem;width:20px;text-align:center;}
+.sidebar-bottom{padding:16px 14px 20px;border-top:2px solid #1e2e1e;}
+.free-badge{background:rgba(255,255,255,0.1);border:2px solid var(--accent);border-radius:var(--radius-sm);padding:10px 13px;font-size:0.73rem;color:var(--accent);}
+.free-badge strong{display:block;font-weight:700;margin-bottom:2px;color:var(--tertiary);}
+.upgrade-btn{width:100%;margin-top:10px;background:var(--tertiary);color:var(--black);border-radius:var(--radius-sm);padding:10px;font-size:0.82rem;font-weight:700;font-family:inherit;border:2px solid var(--black);box-shadow:var(--shadow-sm);transition:transform 0.12s,box-shadow 0.12s;}
+.upgrade-btn:hover{transform:translate(-1px,-1px);box-shadow:var(--shadow);}
+.upgrade-btn:active{transform:translate(1px,1px);box-shadow:none;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:rgba(255,255,255,0.72);backdrop-filter:blur(10px);}
+.topbar{background:transparent;border-bottom:none;padding:18px 28px;display:flex;align-items:center;gap:10px;min-height:80px;}
+.tab{padding:10px 18px;font-size:0.9rem;color:#ffffff;cursor:pointer;font-weight:800;border-radius:999px;border:1px solid rgba(255,255,255,0.35);background:rgba(0,0,0,0.24);transition:all 0.2s;color:var(--white);}
+.tab:hover{background:rgba(255,255,255,0.35);color:var(--black);}
+.tab.active{background:var(--white);color:var(--black);border-color:rgba(0,0,0,0.15);box-shadow:var(--shadow);}
+
+.panel{display:none;flex:1;overflow:hidden;padding:24px 24px;}
+.panel.active{display:flex;}
+
+/* CHAT */
+.chat-panel{flex-direction:column;}
+.chat-messages{flex:1;overflow-y:auto;padding:32px 0 16px;display:flex;flex-direction:column;}
+.message{padding:0 28px;}
+.message+.message{margin-top:28px;}
+.message-user{display:flex;justify-content:flex-end;}
+.bubble-user{background:linear-gradient(45deg, var(--primary), var(--secondary));color:var(--white);border-radius:18px 18px 4px 18px;padding:12px 18px;max-width:480px;font-size:0.9rem;border:2px solid var(--black);box-shadow:var(--shadow-sm);font-weight:500;}
+.message-ai{display:flex;flex-direction:column;gap:12px;}
+.ai-header{display:flex;align-items:center;gap:10px;}
+.ai-avatar{width:34px;height:34px;background:linear-gradient(45deg, var(--tertiary), var(--accent));border-radius:10px;border:2px solid var(--black);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;font-family:'Black Han Sans',sans-serif;font-size:0.85rem;color:var(--black);flex-shrink:0;}
+.ai-name{font-size:0.78rem;font-weight:700;color:var(--primary);letter-spacing:0.05em;text-transform:uppercase;}
+
+.analysis-card{background:linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,241,227,0.95));border:2px dashed rgba(255,111,60,0.7);border-radius:var(--radius);padding:22px 24px;max-width:660px;box-shadow:var(--shadow-lg);position:relative;}
+.analysis-card::before{content:'ANALYSIS';position:absolute;top:-11px;left:16px;background:linear-gradient(135deg, #ff7a50, #ffcd94);color:#fff;font-size:0.6rem;font-weight:800;letter-spacing:0.1em;padding:2px 10px;border-radius:20px;border:2px solid rgba(43,43,43,0.2);}
+.analysis-section{margin-bottom:16px;}
+.analysis-section:last-child{margin-bottom:0;}
+.analysis-label{font-size:0.68rem;color:var(--green-dark);letter-spacing:0.12em;text-transform:uppercase;font-weight:800;margin-bottom:7px;}
+.analysis-text{font-size:0.88rem;color:var(--text2);line-height:1.75;}
+.tag-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;}
+.tag{background:linear-gradient(45deg, var(--accent), var(--tertiary));border:2px solid var(--black);color:var(--white);border-radius:20px;padding:3px 12px;font-size:0.74rem;font-weight:700;box-shadow:var(--shadow-sm);}
+.tag.weak{background:linear-gradient(45deg, #ff6b9d, #ff1493);color:#ffffff;}
+.tag.strength{background:var(--yellow);color:var(--black);}
+
+.image-preview{max-width:260px;border-radius:var(--radius-sm);overflow:hidden;margin-bottom:8px;border:2.5px solid var(--black);box-shadow:var(--shadow-sm);}
+.image-preview img{width:100%;display:block;}
+
+.videos-section,.curriculum-rec{margin-top:16px;max-width:660px;}
+.section-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.section-badge{background:var(--yellow);border:2px solid var(--black);border-radius:20px;padding:3px 12px;font-size:0.7rem;font-weight:800;color:var(--black);box-shadow:var(--shadow-sm);text-transform:uppercase;letter-spacing:0.05em;}
+
+.video-list{display:flex;flex-direction:column;gap:10px;}
+.video-item{background:var(--white);border:2.5px solid var(--black);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;display:flex;box-shadow:var(--shadow-sm);transition:transform 0.12s,box-shadow 0.12s;}
+.video-item:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow);}
+.video-item:active{transform:translate(1px,1px);box-shadow:none;}
+.video-thumb{width:130px;min-width:130px;position:relative;overflow:hidden;background:var(--green-light);}
+.video-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.play-overlay{position:absolute;inset:0;background:rgba(13,26,13,0.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s;font-size:1.6rem;}
+.video-item:hover .play-overlay{opacity:1;}
+.video-info{padding:11px 14px;flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px;}
+.mentor-chip{display:inline-block;background:var(--pink);border:2px solid var(--black);color:var(--white);font-size:0.62rem;font-weight:800;padding:2px 8px;border-radius:10px;width:fit-content;letter-spacing:0.05em;}
+.video-title{font-size:0.82rem;color:var(--text);font-weight:600;line-height:1.4;}
+.video-channel{font-size:0.72rem;color:var(--text3);}
+
+.curriculum-mini-list{display:flex;flex-direction:column;gap:9px;}
+.curriculum-mini-item{background:var(--white);border:2.5px solid var(--black);border-radius:var(--radius-sm);padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform 0.12s,box-shadow 0.12s;}
+.curriculum-mini-item:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow);}
+.cm-thumb{width:38px;height:38px;background:var(--green-light);border-radius:10px;border:2px solid var(--black);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.cm-info{flex:1;}
+.cm-title{font-size:0.85rem;color:var(--text);font-weight:700;}
+.cm-meta{font-size:0.72rem;color:var(--text3);margin-top:2px;}
+.cm-price{font-size:0.85rem;color:var(--green-dark);font-weight:800;white-space:nowrap;}
+
+/* 유튜브 모달 */
+.yt-modal{display:none;position:fixed;inset:0;background:rgba(13,26,13,0.75);z-index:100;align-items:center;justify-content:center;}
+.yt-modal.open{display:flex;}
+.yt-modal-inner{width:90%;max-width:820px;background:var(--white);border:3px solid var(--black);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-lg);}
+.yt-modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:2px solid var(--black);background:var(--green-light);}
+.yt-modal-title{font-size:0.85rem;font-weight:700;color:var(--green-dark);}
+.yt-close{background:var(--black);color:var(--white);font-size:1rem;line-height:1;padding:4px 10px;border-radius:6px;font-weight:700;transition:background 0.15s;}
+.yt-close:hover{background:var(--green-dark);}
+.yt-embed{position:relative;padding-bottom:56.25%;}
+.yt-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:none;}
+
+/* INPUT */
+.chat-input-area{padding:14px 28px 22px;border-top:3px solid var(--black);background:var(--white);}
+.chat-input-wrap{background:var(--bg);border:2.5px solid var(--black);border-radius:var(--radius);padding:4px 4px 4px 16px;display:flex;align-items:flex-end;gap:8px;box-shadow:var(--shadow-sm);max-width:760px;transition:box-shadow 0.15s,transform 0.15s;}
+.chat-input-wrap:focus-within{box-shadow:var(--shadow);transform:translate(-1px,-1px);}
+.chat-input-inner{flex:1;display:flex;flex-direction:column;gap:6px;padding:10px 0;}
+.image-attach-preview{display:none;align-items:center;gap:8px;padding:6px 10px;background:var(--green-light);border-radius:var(--radius-sm);border:2px solid var(--black);font-size:0.75rem;font-weight:600;color:var(--green-dark);}
+.image-attach-preview.show{display:flex;}
+.attach-thumb{width:36px;height:36px;border-radius:6px;object-fit:cover;border:2px solid var(--black);}
+.attach-remove{background:none;color:var(--text3);font-size:0.9rem;padding:2px;line-height:1;font-weight:700;transition:color 0.15s;}
+.attach-remove:hover{color:var(--green-dark);}
+#chatInput{background:none;color:var(--text);font-size:0.9rem;resize:none;width:100%;max-height:140px;overflow-y:auto;line-height:1.6;}
+#chatInput::placeholder{color:var(--text3);}
+.input-actions{display:flex;align-items:center;gap:6px;padding-bottom:6px;}
+.attach-btn{background:none;color:var(--text3);font-size:1.2rem;padding:6px;border-radius:var(--radius-sm);border:2px solid transparent;transition:all 0.15s;}
+.attach-btn:hover{border-color:var(--border);background:var(--green-light);}
+.send-btn{background:var(--green);color:var(--white);border:2px solid var(--black);border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:700;box-shadow:var(--shadow-sm);transition:transform 0.12s,box-shadow 0.12s;}
+.send-btn:hover{transform:translate(-1px,-1px);box-shadow:var(--shadow);}
+.send-btn:active{transform:translate(1px,1px);box-shadow:none;}
+.send-btn:disabled{opacity:0.4;pointer-events:none;}
+.input-hint{font-size:0.68rem;color:var(--text3);margin-top:7px;display:flex;gap:14px;font-weight:500;}
+.input-hint span::before{content:'✦ ';font-size:0.55rem;color:var(--green-mid);}
+
+.typing{display:flex;align-items:center;gap:5px;padding:6px 0;}
+.typing span{width:7px;height:7px;background:var(--green);border-radius:50%;border:1.5px solid var(--black);animation:blink 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:0.2s;}
+.typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes blink{0%,80%,100%{opacity:0.2;transform:scale(0.8);}40%{opacity:1;transform:scale(1.1);}}
+
+/* MENTOR PANEL */
+.mentor-panel{flex-direction:column;overflow-y:auto;}
+.panel-header{padding:28px 28px 0;}
+.panel-title{font-family:'Black Han Sans',sans-serif;font-size:1.8rem;color:var(--text);letter-spacing:-0.01em;line-height:1;}
+.panel-title span{color:var(--green);}
+.panel-subtitle{font-size:0.82rem;color:var(--text3);margin-top:6px;font-weight:500;}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;padding:20px 28px 0;}
+.filter-chip{padding:7px 18px;border-radius:20px;font-size:0.78rem;background:var(--white);color:var(--text2);cursor:pointer;border:2px solid var(--black);font-family:inherit;font-weight:700;box-shadow:var(--shadow-sm);transition:transform 0.12s,box-shadow 0.12s,background 0.12s;}
+.filter-chip:hover{transform:translate(-1px,-1px);box-shadow:var(--shadow);}
+.filter-chip.active{background:var(--green);color:var(--white);transform:translate(-1px,-1px);box-shadow:var(--shadow);}
+.filter-chip:active{transform:translate(1px,1px);box-shadow:none;}
+.mentor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;padding:22px 28px 40px;}
+.mentor-card{background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,247,238,0.95));border:1px solid rgba(255,111,60,0.6);border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:var(--shadow-lg);transition:transform 0.25s,box-shadow 0.25s;position:relative;}
+.mentor-card:hover{transform:translateY(-8px);box-shadow:0 16px 32px rgba(34,34,34,0.24);}
+.mentor-card:active{transform:translateY(1px);box-shadow:var(--shadow-sm);}
+.card-thumb{height:140px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;border-bottom:1px solid rgba(0,0,0,0.08);background:radial-gradient(circle at 20% 20%, #fff1e6, #ff633f 60%);}
+.bg0{background:linear-gradient(135deg, #ffe7d1, #ffd1b5);}
+.bg1{background:linear-gradient(135deg, #e0f7ff, #cfe8ff);}
+.bg2{background:linear-gradient(135deg, #fff2f8, #ffddeb);}
+.bg3{background:linear-gradient(135deg, #ecffde, #d7f7cc);}
+.card-level-badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.8);color:#fff;font-size:0.62rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:4px 11px;border-radius:8px;}
+.card-verified{position:absolute;top:10px;right:10px;background:rgba(255,111,60,0.95);color:#fff;font-size:0.62rem;font-weight:800;padding:4px 11px;border-radius:8px;border:1px solid rgba(255,255,255,0.8);}
+.card-body{padding:16px;}
+.card-title{font-size:1rem;font-weight:800;color:#2b2b2b;margin-bottom:6px;line-height:1.2;}
+.card-mentor-name{font-size:0.75rem;font-weight:700;color:#6b6b6b;margin-bottom:8px;}
+.card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+.card-tag{background:rgba(255,111,60,0.15);color:#ff6f3c;font-size:0.68rem;font-weight:700;padding:4px 10px;border-radius:999px;border:1px solid rgba(255,111,60,0.35);}
+.card-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(0,0,0,0.08);padding-top:12px;}
+.card-meta{font-size:0.72rem;color:#6b6b6b;font-weight:600;}
+.card-price{font-size:0.96rem;color:#ff6f3c;font-weight:900;}
+.enroll-btn{width:100%;margin-top:12px;background:linear-gradient(135deg, #ff8b59, #ff4e42);color:#fff;font-size:0.85rem;font-weight:800;padding:12px 16px;border-radius:999px;font-family:inherit;border:none;box-shadow:0 8px 20px rgba(255,111,60,0.3);letter-spacing:0.03em;transition:transform 0.16s,box-shadow 0.16s;}
+.enroll-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(255,111,60,0.38);}
+.enroll-btn:active{transform:translateY(1px);box-shadow:0 5px 14px rgba(255,111,60,0.2);}
+
+/* WELCOME */
+.welcome-wrap{padding:40px 28px 0;max-width:600px;}
+.welcome-kicker{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(45deg, var(--primary), var(--secondary));border:2px solid var(--black);border-radius:20px;padding:4px 14px;font-size:0.72rem;font-weight:800;color:var(--white);box-shadow:var(--shadow-sm);margin-bottom:14px;letter-spacing:0.05em;text-transform:uppercase;}
+.welcome-title{font-family:'Black Han Sans',sans-serif;font-size:1.7rem;color:var(--text);margin-bottom:8px;line-height:1.25;letter-spacing:-0.01em;}
+.welcome-title em{color:var(--primary);font-style:normal;}
+.welcome-sub{font-size:0.85rem;color:var(--text3);margin-bottom:22px;font-weight:500;}
+.quick-btns{display:flex;flex-wrap:wrap;gap:9px;}
+.quick-btn{background:linear-gradient(45deg, var(--accent), var(--tertiary));border:2px solid var(--black);color:var(--white);font-size:0.8rem;font-weight:700;padding:8px 18px;border-radius:20px;cursor:pointer;font-family:inherit;box-shadow:var(--shadow-sm);transition:transform 0.12s,box-shadow 0.12s,background 0.12s;}
+.quick-btn:hover{background:var(--green-light);transform:translate(-1px,-1px);box-shadow:var(--shadow);}
+.quick-btn:active{transform:translate(1px,1px);box-shadow:none;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--black);color:var(--green-light);padding:10px 22px;border-radius:20px;border:2px solid var(--green);font-size:0.82rem;font-weight:700;opacity:0;transition:all 0.3s;pointer-events:none;z-index:200;white-space:nowrap;box-shadow:var(--shadow);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .mentor-grid{grid-template-columns:1fr;padding:14px;}
+  .chat-messages{padding:16px 0 8px;}
+  .message{padding:0 14px;}
+  .chat-input-area{padding:10px 14px 18px;}
+  .panel-header,.filter-bar{padding-left:14px;padding-right:14px;}
+  .welcome-wrap{padding:20px 14px 0;}
+}
+</style>
+</head>
+<body>
+
+<div class="yt-modal" id="ytModal">
+  <div class="yt-modal-inner">
+    <div class="yt-modal-header">
+      <span class="yt-modal-title" id="ytModalTitle"></span>
+      <button class="yt-close" onclick="closeYT()">✕</button>
+    </div>
+    <div class="yt-embed">
+      <iframe id="ytFrame" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-text">SSEUK</div>
+      <div class="logo-sub">미술 연습 솔루션 플랫폼</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">메뉴</div>
+      <div class="nav-item active" onclick="switchTab('chat')"><span class="nav-icon">💬</span> AI 분석</div>
+      <div class="nav-item" onclick="switchTab('mentor')"><span class="nav-icon">🎨</span> 멘토 찾기</div>
+      <div class="nav-section">내 활동</div>
+      <div class="nav-item" onclick="showToast('준비 중인 기능입니다')"><span class="nav-icon">📁</span> 분석 기록</div>
+      <div class="nav-item" onclick="showToast('준비 중인 기능입니다')"><span class="nav-icon">⭐</span> 수강 중</div>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="free-badge">
+        <strong>무료 이용 중</strong>
+        오늘 3회 분석 남음
+      </div>
+      <button class="upgrade-btn" onclick="showToast('멤버십 준비 중입니다')">🌟 멤버십 업그레이드</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="tab active" id="tab-chat" onclick="switchTab('chat')">AI 분석</div>
+      <div class="tab" id="tab-mentor" onclick="switchTab('mentor')">멘토 찾기</div>
+    </div>
+
+    <!-- 채팅 패널 -->
+    <div class="panel chat-panel active" id="panel-chat">
+      <div class="chat-messages" id="chatMessages">
+        <div class="welcome-wrap" id="welcomeMsg">
+          <div class="welcome-kicker">✦ AI 미술 분석</div>
+          <div class="welcome-title">오늘 어떤 그림<br>연습하고 있어요? <em>슥</em></div>
+          <div class="welcome-sub">그림을 올리거나 고민을 입력하면 AI가 약점을 분석하고 영상을 찾아드려요.</div>
+          <div class="quick-btns">
+            <button class="quick-btn" onclick="fillInput('원근법이 자꾸 어색해요')">✏️ 원근법이 어색해요</button>
+            <button class="quick-btn" onclick="fillInput('인체 비율 잡는 법을 모르겠어요')">🧍 인체 비율이 어려워요</button>
+            <button class="quick-btn" onclick="fillInput('명암을 어떻게 넣어야 할지 모르겠어요')">🌗 명암 넣는 법 헷갈려요</button>
+            <button class="quick-btn" onclick="fillInput('색감을 어떻게 잡아야 할지 모르겠어요')">🎨 색감 잡는 게 어려워요</button>
+          </div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-wrap">
+          <div class="chat-input-inner">
+            <div class="image-attach-preview" id="attachPreview">
+              <img class="attach-thumb" id="attachThumb" src="" alt="">
+              <span id="attachName"></span>
+              <button class="attach-remove" onclick="removeAttach()">✕</button>
+            </div>
+            <textarea id="chatInput" rows="1" placeholder="그림을 올리거나 고민을 입력하세요..." oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
+          </div>
+          <div class="input-actions">
+            <label class="attach-btn" title="그림 첨부">🖼<input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(this)"></label>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">→</button>
+          </div>
+        </div>
+        <div class="input-hint">
+          <span>그림 업로드 가능</span>
+          <span>Enter로 전송</span>
+          <span>하루 3회 무료</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 멘토 찾기 패널 -->
+    <div class="panel mentor-panel" id="panel-mentor">
+      <div class="panel-header">
+        <div class="panel-title">멘토 <span>찾기</span></div>
+        <div class="panel-subtitle">검증된 멘토의 커리큘럼으로 체계적으로 배워보세요</div>
+      </div>
+      <div class="filter-bar">
+        <button class="filter-chip active" onclick="filterMentor('all',this)">전체</button>
+        <button class="filter-chip" onclick="filterMentor('basic',this)">기초</button>
+        <button class="filter-chip" onclick="filterMentor('figure',this)">인체</button>
+        <button class="filter-chip" onclick="filterMentor('perspective',this)">원근법</button>
+        <button class="filter-chip" onclick="filterMentor('color',this)">색채</button>
+        <button class="filter-chip" onclick="filterMentor('digital',this)">디지털</button>
+        <button class="filter-chip" onclick="filterMentor('exam',this)">입시</button>
+      </div>
+      <div class="mentor-grid" id="mentorGrid"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const CONFIG = { YOUTUBE_API_KEY: typeof __YOUTUBE_API_KEY__ !== 'undefined' ? __YOUTUBE_API_KEY__ : '' };
+let attachedBase64 = null, isLoading = false;
+
+function switchTab(tab) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+  const ni = document.querySelectorAll('.nav-item');
+  if(tab==='chat') ni[0].classList.add('active');
+  if(tab==='mentor') ni[1].classList.add('active');
+}
+
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function fillInput(t){const i=document.getElementById('chatInput');i.value=t;autoResize(i);i.focus();}
+function handleFile(input){
+  const file=input.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{attachedBase64=e.target.result.split(',')[1];document.getElementById('attachThumb').src=e.target.result;document.getElementById('attachName').textContent=file.name;document.getElementById('attachPreview').classList.add('show');};
+  r.readAsDataURL(file); input.value='';
+}
+function removeAttach(){attachedBase64=null;document.getElementById('attachPreview').classList.remove('show');}
+
+async function sendMessage(){
+  if(isLoading) return;
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text&&!attachedBase64) return;
+  const welcome=document.getElementById('welcomeMsg');
+  if(welcome) welcome.style.display='none';
+  appendUserMessage(text,attachedBase64);
+  const uT=text,uI=attachedBase64;
+  input.value='';input.style.height='auto';removeAttach();
+  isLoading=true; document.getElementById('sendBtn').disabled=true;
+  const lid=appendLoading();
+  try{
+    const analysis=await callAI(uT,uI);
+    removeLoading(lid);
+    let videos=[];
+    if((analysis.keywords||[]).length>0) videos=await searchYouTube(analysis.keywords.slice(0,2).join(' ')+' 그림 그리기 강좌');
+    appendAIMessage(analysis,videos,getRecommendedMentors(analysis.keywords));
+  }catch(err){removeLoading(lid);appendErrorMessage(err.message);}
+  isLoading=false; document.getElementById('sendBtn').disabled=false;
+  scrollToBottom();
+}
+
+function appendUserMessage(text,imgBase64){
+  const div=document.createElement('div'); div.className='message message-user';
+  let h='';
+  if(imgBase64) h+=`<div class="image-preview"><img src="data:image/jpeg;base64,${imgBase64}" alt=""></div>`;
+  if(text) h+=`<div class="bubble-user">${esc(text)}</div>`;
+  div.innerHTML=h; document.getElementById('chatMessages').appendChild(div); scrollToBottom();
+}
+function appendLoading(){
+  const id='l'+Date.now(); const div=document.createElement('div');
+  div.className='message message-ai'; div.id=id;
+  div.innerHTML=`<div class="ai-header"><div class="ai-avatar">S</div><span class="ai-name">SSEUK AI</span></div><div class="analysis-card"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  document.getElementById('chatMessages').appendChild(div); scrollToBottom(); return id;
+}
+function removeLoading(id){const el=document.getElementById(id);if(el)el.remove();}
+
+function appendAIMessage(a,videos,rec){
+  const div=document.createElement('div'); div.className='message message-ai';
+  const wt=(a.weaknesses||[]).map(w=>`<span class="tag weak">${esc(w)}</span>`).join('');
+  const st=(a.strengths||[]).map(s=>`<span class="tag strength">${esc(s)}</span>`).join('');
+  const kt=(a.keywords||[]).map(k=>`<span class="tag">${esc(k)}</span>`).join('');
+  let vh='';
+  if(videos.length>0) vh=`<div class="videos-section"><div class="section-header"><span class="section-badge">▶ 추천 영상</span></div><div class="video-list">${videos.map(v=>`<div class="video-item" onclick="openYT('${v.id}','${escA(v.title)}')"><div class="video-thumb"><img src="${v.thumbnail}" alt="" loading="lazy"><div class="play-overlay">▶</div></div><div class="video-info">${v.isMentor?'<div class="mentor-chip">멘토 추천</div>':''}<div class="video-title">${esc(v.title)}</div><div class="video-channel">${esc(v.channel)}</div></div></div>`).join('')}</div></div>`;
+  let rh='';
+  if(rec.length>0) rh=`<div class="curriculum-rec"><div class="section-header"><span class="section-badge">📚 추천 멘토</span></div><div class="curriculum-mini-list">${rec.slice(0,3).map(c=>`<div class="curriculum-mini-item" onclick="switchTab('mentor')"><div class="cm-thumb">${c.emoji}</div><div class="cm-info"><div class="cm-title">${esc(c.title)}</div><div class="cm-meta">${esc(c.mentor)} · ${c.sessions}회차</div></div><div class="cm-price">${c.price}</div></div>`).join('')}</div></div>`;
+  div.innerHTML=`<div class="ai-header"><div class="ai-avatar">S</div><span class="ai-name">SSEUK AI</span></div>
+    <div class="analysis-card">
+      ${a.summary?`<div class="analysis-section"><div class="analysis-label">분석 요약</div><div class="analysis-text">${esc(a.summary)}</div></div>`:''}
+      ${(a.weaknesses||[]).length?`<div class="analysis-section"><div class="analysis-label">개선이 필요한 부분</div><div class="tag-list">${wt}</div></div>`:''}
+      ${(a.strengths||[]).length?`<div class="analysis-section"><div class="analysis-label">잘 되고 있는 부분</div><div class="tag-list">${st}</div></div>`:''}
+      ${a.advice?`<div class="analysis-section"><div class="analysis-label">솔루션</div><div class="analysis-text">${esc(a.advice)}</div></div>`:''}
+      ${(a.keywords||[]).length?`<div class="analysis-section"><div class="analysis-label">연습 키워드</div><div class="tag-list">${kt}</div></div>`:''}
+    </div>${vh}${rh}`;
+  document.getElementById('chatMessages').appendChild(div); scrollToBottom();
+}
+function appendErrorMessage(msg){
+  const div=document.createElement('div'); div.className='message message-ai';
+  div.innerHTML=`<div class="ai-header"><div class="ai-avatar">S</div><span class="ai-name">SSEUK AI</span></div><div class="analysis-card"><div class="analysis-text" style="color:#8a1a1a">오류: ${esc(msg)}</div></div>`;
+  document.getElementById('chatMessages').appendChild(div);
+}
+function scrollToBottom(){const el=document.getElementById('chatMessages');el.scrollTop=el.scrollHeight;}
+
+async function callAI(text,imgBase64){
+  const content=[];
+  if(imgBase64) content.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:imgBase64}});
+  content.push({type:'text',text:`당신은 미술 교육 전문가입니다. 아래 JSON 형식으로만 응답하세요.\n사용자 입력: "${text||'그림을 분석해주세요'}"\n{"summary":"2~3문장 분석 요약","weaknesses":["개선점1","개선점2"],"strengths":["강점1"],"advice":"구체적인 솔루션 3~4문장","keywords":["키워드1","키워드2","키워드3"]}`});
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'미술 교육 전문가. 반드시 유효한 JSON만 출력.',messages:[{role:'user',content}]})});
+  if(!res.ok) throw new Error(`AI 오류 (${res.status})`);
+  const data=await res.json();
+  const raw=data.content.map(c=>c.text||'').join('');
+  try{const m=raw.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):{summary:raw,keywords:[],weaknesses:[],strengths:[],advice:''};}
+  catch{return{summary:raw,keywords:[],weaknesses:[],strengths:[],advice:''};}
+}
+
+async function searchYouTube(query){
+  if(!CONFIG.YOUTUBE_API_KEY) return getDummyVideos(query);
+  try{
+    const url=`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=3&relevanceLanguage=ko&key=${CONFIG.YOUTUBE_API_KEY}`;
+    const res=await fetch(url); if(!res.ok) throw new Error();
+    const data=await res.json();
+    return(data.items||[]).map(i=>({id:i.id.videoId,title:i.snippet.title,channel:i.snippet.channelTitle,thumbnail:i.snippet.thumbnails.medium?.url||i.snippet.thumbnails.default?.url,isMentor:false}));
+  }catch{return getDummyVideos(query);}
+}
+function getDummyVideos(q){return[{id:'dQw4w9WgXcQ',title:`[기초] ${q} 완전 정복`,channel:'그림연구소',thumbnail:'https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg',isMentor:false},{id:'9bZkp7q19f0',title:`${q} 핵심 10분 정리`,channel:'미술독학TV',thumbnail:'https://img.youtube.com/vi/9bZkp7q19f0/mqdefault.jpg',isMentor:true}];}
+function openYT(id,title){document.getElementById('ytModalTitle').textContent=title;document.getElementById('ytFrame').src=`https://www.youtube.com/embed/${id}?autoplay=1`;document.getElementById('ytModal').classList.add('open');}
+function closeYT(){document.getElementById('ytModal').classList.remove('open');document.getElementById('ytFrame').src='';}
+document.getElementById('ytModal').addEventListener('click',function(e){if(e.target===this)closeYT();});
+
+const MENTORS=[
+  {id:1,title:'연필 소묘 기초부터 완성까지',mentor:'김소연',emoji:'✏️',sessions:8,price:'89,000원',tags:['기초','소묘','명암'],category:'basic',level:'입문',bg:0},
+  {id:2,title:'인체 비율과 포즈 드로잉',mentor:'박지훈',emoji:'🧍',sessions:10,price:'120,000원',tags:['인체','포즈','비율'],category:'figure',level:'중급',bg:1},
+  {id:3,title:'1점·2점 투시 원근법 마스터',mentor:'이민준',emoji:'📐',sessions:6,price:'72,000원',tags:['원근법','투시','배경'],category:'perspective',level:'초급',bg:2},
+  {id:4,title:'수채화 색채 감각 키우기',mentor:'최예린',emoji:'🎨',sessions:8,price:'95,000원',tags:['색채','수채화','배색'],category:'color',level:'초급',bg:3},
+  {id:5,title:'클립스튜디오 디지털 드로잉',mentor:'한도윤',emoji:'💻',sessions:12,price:'140,000원',tags:['디지털','클립스튜디오','채색'],category:'digital',level:'초급',bg:0},
+  {id:6,title:'수능 미술 실기 완성 과정',mentor:'오승현',emoji:'🏆',sessions:16,price:'220,000원',tags:['입시','실기','수능'],category:'exam',level:'입시',bg:1},
+  {id:7,title:'얼굴·두상 비율 집중 훈련',mentor:'정수아',emoji:'😊',sessions:6,price:'68,000원',tags:['얼굴','인물','비율'],category:'figure',level:'초급',bg:2},
+  {id:8,title:'빛과 명암으로 입체감 만들기',mentor:'강민호',emoji:'🌟',sessions:8,price:'88,000원',tags:['명암','빛','입체'],category:'basic',level:'중급',bg:3},
+];
+
+const BG_CLASSES=['bg0','bg1','bg2','bg3'];
+function renderMentors(list){
+  document.getElementById('mentorGrid').innerHTML=list.map(c=>`
+    <div class="mentor-card">
+      <div class="card-thumb ${BG_CLASSES[c.bg]}"><span>${c.emoji}</span><span class="card-level-badge">${c.level}</span><span class="card-verified">✓ 검증</span></div>
+      <div class="card-body">
+        <div class="card-title">${esc(c.title)}</div>
+        <div class="card-mentor-name">👤 ${esc(c.mentor)} 멘토</div>
+        <div class="card-tags">${c.tags.map(t=>`<span class="card-tag">${esc(t)}</span>`).join('')}</div>
+        <div class="card-footer"><span class="card-meta">${c.sessions}회차 과정</span><span class="card-price">${c.price}</span></div>
+        <button class="enroll-btn" onclick="showToast('${escA(c.title)} 신청이 준비 중입니다')">수강 신청하기 →</button>
+      </div>
+    </div>`).join('');
+}
+function filterMentor(cat,btn){document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderMentors(cat==='all'?MENTORS:MENTORS.filter(c=>c.category===cat));}
+function getRecommendedMentors(kw){if(!kw||!kw.length) return MENTORS.slice(0,2);const k=kw.map(x=>x.toLowerCase());return MENTORS.filter(c=>c.tags.some(t=>k.some(x=>t.includes(x)||x.includes(t)))).slice(0,3);}
+
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escA(s){if(!s)return'';return String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+
+renderMentors(MENTORS);
+</script>
+</body>
+</html>
