@@ -52,7 +52,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
+            width: 100%;
             height: 100vh;
             z-index: -1;
             overflow: hidden;
@@ -175,11 +175,59 @@
             border: 2px solid var(--white);
             border-radius: 0;
             transition: background 0.2s;
+            cursor: pointer;
+            position: relative;
         }
-        
+
         .nav-dot.active, .nav-dot:hover {
             background: var(--magenta);
             border-color: var(--magenta);
+        }
+
+        .nav-dot-label {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--font-tech);
+            font-size: 0.6rem;
+            color: var(--cyan);
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .nav-dot:hover .nav-dot-label { opacity: 1; }
+
+        .nav-mentor-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            background: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            text-decoration: none;
+        }
+        .nav-mentor-btn:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 212, 255, 0.1);
+        }
+        .nav-mentor-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--cyan);
+            stroke-width: 1.5;
+            fill: none;
+        }
+        .nav-mentor-btn .nav-dot-label {
+            left: 48px;
+            font-size: 0.55rem;
         }
 
         .nav-sys-code {
@@ -955,11 +1003,267 @@
         @media (max-width: 768px) {
             .side-nav { display: none; }
             .main-content { margin-left: 0; }
-            .mega-title { font-size: 4rem; }
+            .mega-title { font-size: 3.2rem; }
+            .mega-title span:nth-child(3) { margin-left: 0.3em; }
             .cards-grid { grid-template-columns: 1fr; }
-            .section-header { flex-direction: column; align-items: flex-start; }
+            .section-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+            .section-title { font-size: 2.5rem; }
+            .diag-title { font-size: 2rem; }
             .analyze-grid { grid-template-columns: 1fr; }
-            .chat-window { min-height: 350px; }
+            .chat-window { min-height: 280px; max-height: 400px; }
+            .chat-body { padding: 1rem; gap: 1rem; }
+            .upload-zone { min-height: 200px; }
+            .scanner-visual { height: 180px; }
+            .video-grid { grid-template-columns: 1fr; }
+            .diag-panel { padding: 1.25rem; }
+            .solution-card { padding: 1.25rem; }
+            .ticker { font-size: 1rem; }
+            .ticker span { padding: 0 1rem; }
+            .video-close-btn { padding: 0.5rem 0.8rem; font-size: 0.75rem; }
+            .cat-panel-close { padding: 0.5rem 1rem; }
+            .mobile-dash-btn { display: flex; }
+            .hero-desc { max-width: 100%; }
+            .hero { padding: 0 5vw; }
+        }
+
+        @media (max-width: 480px) {
+            .mega-title { font-size: 2.5rem; }
+            .mega-title span:nth-child(3) { margin-left: 0; font-size: 0.5em; }
+            .section-title { font-size: 2rem; }
+            .hero-desc p { font-size: 0.95rem; }
+            .btn { padding: 1rem 1.5rem; font-size: 0.85rem; }
+        }
+
+        /* ===== 모바일 대시보드 ===== */
+        .mobile-dash-btn {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 200;
+            width: 44px;
+            height: 44px;
+            background: var(--black);
+            border: 2px solid var(--cyan);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .mobile-dash-btn:hover,
+        .mobile-dash-btn.open { background: var(--cyan); }
+        .mobile-dash-btn:hover .dash-icon line,
+        .mobile-dash-btn.open .dash-icon line { stroke: var(--black); }
+
+        .dash-icon { width: 22px; height: 22px; stroke: var(--cyan); stroke-width: 2; stroke-linecap: round; }
+
+        .mobile-dash-panel {
+            display: none;
+            position: fixed;
+            top: 0; right: 0;
+            width: min(280px, 85vw);
+            height: 100vh;
+            background: rgba(10, 10, 32, 0.97);
+            backdrop-filter: blur(16px);
+            border-left: 2px solid rgba(0, 212, 255, 0.2);
+            z-index: 199;
+            padding: 4rem 1.25rem 2rem;
+            flex-direction: column;
+            gap: 0;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .mobile-dash-panel.open {
+            display: flex;
+            transform: translateX(0);
+        }
+
+        .mobile-dash-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 198;
+        }
+        .mobile-dash-overlay.open { display: block; }
+
+        .dash-section-label {
+            font-family: var(--font-tech);
+            font-size: 0.6rem;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.35rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+        }
+        .dash-section-label:first-child { margin-top: 0; }
+
+        .dash-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 0.75rem;
+            min-height: 48px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-family: var(--font-kr);
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+            cursor: pointer;
+        }
+        .dash-link:hover,
+        .dash-link.active {
+            color: var(--white);
+            border-left-color: var(--magenta);
+            background: rgba(255, 0, 127, 0.06);
+        }
+
+        .dash-link-icon {
+            width: 24px;
+            height: 24px;
+            stroke: var(--cyan);
+            stroke-width: 1.5;
+            fill: none;
+            flex-shrink: 0;
+        }
+
+        .dash-link-sub {
+            font-family: var(--font-tech);
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.3);
+            display: block;
+            margin-top: 0.15rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .dash-mentor-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 0.75rem;
+            min-height: 44px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.65);
+            font-size: 0.9rem;
+            transition: color 0.15s;
+        }
+        .dash-mentor-link:hover { color: var(--cyan); }
+
+        .dash-mentor-avatar {
+            width: 36px;
+            height: 36px;
+            object-fit: cover;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        /* ===== 추천 멘토 섹션 ===== */
+        .section-mentors {
+            padding: var(--section-pad);
+            background: #0d0d1a;
+            position: relative;
+            z-index: 10;
+        }
+
+        .mentor-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .mentor-card {
+            background: rgba(10, 10, 32, 0.9);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 1.5rem;
+            display: flex;
+            gap: 1.25rem;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .mentor-card:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 212, 255, 0.04);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 0 var(--magenta);
+        }
+
+        .mentor-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 0;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            object-fit: cover;
+            flex-shrink: 0;
+            filter: grayscale(30%);
+            transition: filter 0.2s;
+        }
+
+        .mentor-card:hover .mentor-avatar {
+            filter: grayscale(0%);
+            border-color: var(--cyan);
+        }
+
+        .mentor-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            min-width: 0;
+        }
+
+        .mentor-name {
+            font-family: var(--font-kr);
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--white);
+        }
+
+        .mentor-specialty {
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .mentor-bio {
+            font-family: var(--font-kr);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .mentor-video-count {
+            font-family: var(--font-tech);
+            font-size: 0.65rem;
+            color: var(--magenta);
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 1024px) {
+            .mentor-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .mentor-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .mentor-card { padding: 1rem; gap: 1rem; }
+            .mentor-avatar { width: 56px; height: 56px; }
+            .mentor-specialty { font-size: 0.75rem; }
+            .section-mentors { padding: 5vw; }
+            .section-solutions { padding: 5vw; }
         }
     </style>
 </head>
@@ -999,18 +1303,62 @@
     
     <nav class="side-nav" vid="29">
         <a href="#" class="nav-logo" vid="30">SSEUK.ART</a>
-        <div class="nav-links" vid="31">
-            <div class="nav-dot active" vid="32"></div>
-            <div class="nav-dot" vid="33"></div>
-            <div class="nav-dot" vid="34"></div>
+        <div class="nav-links" id="navLinks">
+            <div class="nav-dot active" data-target="hero"><span class="nav-dot-label">Home</span></div>
+            <div class="nav-dot" data-target="analyze"><span class="nav-dot-label">AI 분석</span></div>
+            <div class="nav-dot" data-target="mentors"><span class="nav-dot-label">멘토</span></div>
+            <div class="nav-dot" data-target="categories"><span class="nav-dot-label">카테고리</span></div>
         </div>
+        <a class="nav-mentor-btn" href="mentor.html" title="멘토 관리">
+            <svg viewBox="0 0 20 20"><circle cx="10" cy="6" r="4"/><path d="M2 18c0-4 3.5-7 8-7s8 3 8 7"/><line x1="15" y1="3" x2="15" y2="9"/><line x1="12" y1="6" x2="18" y2="6"/></svg>
+            <span class="nav-dot-label">멘토 관리</span>
+        </a>
         <div class="nav-sys-code" vid="35">ART.v.1.0.0</div>
+    </nav>
+
+    <!-- 모바일 대시보드 -->
+    <button class="mobile-dash-btn" id="mobileDashBtn" aria-label="내 대시보드">
+        <svg class="dash-icon" viewBox="0 0 22 22">
+            <line x1="3" y1="6" x2="19" y2="6"/>
+            <line x1="3" y1="11" x2="19" y2="11"/>
+            <line x1="3" y1="16" x2="13" y2="16"/>
+        </svg>
+    </button>
+    <div class="mobile-dash-overlay" id="mobileDashOverlay"></div>
+    <nav class="mobile-dash-panel" id="mobileDashPanel">
+        <div class="dash-section-label">내 대시보드</div>
+
+        <a class="dash-link" data-target="hero">
+            <svg class="dash-link-icon" viewBox="0 0 20 20"><path d="M3 10L10 3l7 7M5 9v7a1 1 0 001 1h3v-4h2v4h3a1 1 0 001-1V9"/></svg>
+            <div>홈<span class="dash-link-sub">SSEUK ART SOLUTION</span></div>
+        </a>
+
+        <a class="dash-link" data-target="analyze">
+            <svg class="dash-link-icon" viewBox="0 0 20 20"><circle cx="8" cy="8" r="5"/><line x1="12" y1="12" x2="18" y2="18"/></svg>
+            <div>AI 그림 분석<span class="dash-link-sub">Upload & Feedback</span></div>
+        </a>
+
+        <a class="dash-link" data-target="mentors">
+            <svg class="dash-link-icon" viewBox="0 0 20 20"><circle cx="10" cy="6" r="4"/><path d="M2 18c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+            <div>추천 멘토<span class="dash-link-sub">Featured Mentors</span></div>
+        </a>
+
+        <a class="dash-link" data-target="categories">
+            <svg class="dash-link-icon" viewBox="0 0 20 20"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg>
+            <div>카테고리 영상<span class="dash-link-sub">Browse by Category</span></div>
+        </a>
+
+        <div class="dash-section-label">멘토 바로가기</div>
+        <a class="dash-mentor-link" href="mentor.html?id=mentor-1"><img class="dash-mentor-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" alt="">김도윤</a>
+        <a class="dash-mentor-link" href="mentor.html?id=mentor-2"><img class="dash-mentor-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&fit=crop&crop=face" alt="">이서연</a>
+        <a class="dash-mentor-link" href="mentor.html?id=mentor-3"><img class="dash-mentor-avatar" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face" alt="">박준호</a>
+        <a class="dash-mentor-link" href="mentor.html?id=mentor-4"><img class="dash-mentor-avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face" alt="">최유진</a>
     </nav>
 
     <main class="main-content" vid="36">
         
         
-        <section class="hero" vid="37">
+        <section id="hero" class="hero" vid="37">
             <div class="hero-typographic-cluster" vid="38">
                 <div class="sys-label" vid="39">AI 기반 미술 독학 플랫폼</div>
                 <h1 class="mega-title" vid="40">
@@ -1102,7 +1450,26 @@
             </div>
         </div>
 
-        <section class="section-solutions">
+        <!-- ===== 추천 멘토 섹션 ===== -->
+        <section id="mentors" class="section-mentors">
+            <div class="section-header">
+                <div>
+                    <div class="sys-label">Module_01: Featured Mentors</div>
+                    <h2 class="section-title">추천 멘토</h2>
+                </div>
+                <div style="font-family: var(--font-tech); text-align:right; font-size: 0.85rem;">
+                    <div>실력 있는 멘토에게</div>
+                    <div style="color: var(--cyan);">직접 배워보세요_</div>
+                </div>
+            </div>
+
+            <div class="mentor-grid" id="mentorGrid">
+                <!-- Supabase에서 로드하거나 더미 데이터 fallback -->
+                <div style="color:rgba(255,255,255,0.3);font-family:var(--font-tech);font-size:0.8rem;text-align:center;padding:2rem;grid-column:1/-1;text-transform:uppercase;letter-spacing:0.08em" id="mentorLoading">Loading mentors...</div>
+            </div>
+        </section>
+
+        <section id="categories" class="section-solutions">
             <div class="section-header">
                 <div>
                     <div class="sys-label">분야별 학습 영상</div>
@@ -1394,6 +1761,138 @@
             setTimeout(() => typewriter(el, text, i + 1, speed), speed);
         }
     }
+
+    // ===== 홈화면 멘토 로드 (Supabase → 더미 fallback) =====
+    var mentorGrid = document.getElementById('mentorGrid');
+    var defaultMentors = [
+        { id: 'mentor-1', name: '김도윤', specialty: 'Foundation / Drawing', bio: '기초 드로잉 전문. 선 하나부터 형태 잡기까지, 처음 시작하는 분들을 위한 체계적 커리큘럼을 제공합니다.', profile_image_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face', _lectures: 12 },
+        { id: 'mentor-2', name: '이서연', specialty: 'Color / Watercolor', bio: '수채화와 색채 이론 전문가. 색감을 살리는 채색법과 물 조절 테크닉을 알려드립니다.', profile_image_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face', _lectures: 8 },
+        { id: 'mentor-3', name: '박준호', specialty: 'Figure / Anatomy', bio: '인체 해부학 기반 인물화. 비례, 동세, 얼굴 표현까지 인물 드로잉의 모든 것을 다룹니다.', profile_image_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face', _lectures: 15 },
+        { id: 'mentor-4', name: '최유진', specialty: 'Digital / Procreate', bio: '프로크리에이트 & 클립스튜디오 전문. 디지털 드로잉 입문부터 상업 일러스트까지 가이드합니다.', profile_image_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face', _lectures: 20 },
+        { id: 'mentor-5', name: '정민수', specialty: 'Shading / Perspective', bio: '명암과 원근법 마스터. 2D에서 3D로 넘어가는 핵심 테크닉과 공간감 표현을 집중 교육합니다.', profile_image_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face', _lectures: 10 },
+        { id: 'mentor-6', name: '한소희', specialty: 'Composition / Landscape', bio: '구도와 풍경화 전문가. 자연 풍경부터 도시 스케치까지, 그림의 배치와 공간을 설계하는 법을 알려줍니다.', profile_image_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face', _lectures: 9 },
+    ];
+
+    function renderMentorGrid(list) {
+        mentorGrid.innerHTML = '';
+        list.forEach(function(m) {
+            var card = document.createElement('a');
+            card.className = 'mentor-card';
+            card.href = 'mentor.html?id=' + m.id;
+            var imgSrc = m.profile_image_url || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=150&h=150&fit=crop&crop=face';
+            var lectures = m._lectures || m.video_count || 0;
+            card.innerHTML = '<img class="mentor-avatar" src="' + escapeHtml(imgSrc) + '" alt="' + escapeHtml(m.name || '') + '">'
+                + '<div class="mentor-info">'
+                + '<div class="mentor-name">' + escapeHtml(m.name || '멘토') + '</div>'
+                + '<div class="mentor-specialty">' + escapeHtml(m.specialty || '') + '</div>'
+                + '<div class="mentor-bio">' + escapeHtml(m.bio || '') + '</div>'
+                + '<div class="mentor-video-count">' + lectures + ' LECTURES</div>'
+                + '</div>';
+            mentorGrid.appendChild(card);
+        });
+    }
+
+    (async function loadHomeMentors() {
+        try {
+            var res = await fetch('/api/mentors');
+            if (!res.ok) throw new Error('API error');
+            var data = await res.json();
+            if (Array.isArray(data) && data.length > 0) {
+                // Supabase 데이터에 영상 수 추가
+                for (var i = 0; i < data.length; i++) {
+                    try {
+                        var vRes = await fetch('/api/mentor-videos?mentor_id=' + data[i].id);
+                        var vData = await vRes.json();
+                        data[i].video_count = Array.isArray(vData) ? vData.length : 0;
+                    } catch (e) { data[i].video_count = 0; }
+                }
+                renderMentorGrid(data);
+            } else {
+                renderMentorGrid(defaultMentors);
+            }
+        } catch (e) {
+            renderMentorGrid(defaultMentors);
+        }
+    })();
+
+    // ===== 모바일 대시보드 =====
+    var dashBtn = document.getElementById('mobileDashBtn');
+    var dashPanel = document.getElementById('mobileDashPanel');
+    var dashOverlay = document.getElementById('mobileDashOverlay');
+
+    function openDash() {
+        dashPanel.classList.add('open');
+        dashOverlay.classList.add('open');
+        dashBtn.classList.add('open');
+    }
+    function closeDash() {
+        dashPanel.classList.remove('open');
+        dashOverlay.classList.remove('open');
+        dashBtn.classList.remove('open');
+    }
+
+    dashBtn.addEventListener('click', function() {
+        dashPanel.classList.contains('open') ? closeDash() : openDash();
+    });
+    dashOverlay.addEventListener('click', closeDash);
+
+    // 대시보드 내 섹션 이동 링크
+    dashPanel.querySelectorAll('.dash-link[data-target]').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = document.getElementById(link.dataset.target);
+            if (target) {
+                closeDash();
+                setTimeout(function() {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }, 200);
+            }
+        });
+    });
+
+    // 스크롤 시 대시보드 active 업데이트
+    var dashLinks = dashPanel.querySelectorAll('.dash-link[data-target]');
+    var dashSections = Array.from(dashLinks).map(function(link) {
+        return { link: link, section: document.getElementById(link.dataset.target) };
+    }).filter(function(item) { return item.section; });
+
+    function updateDashActive() {
+        var scrollY = window.scrollY + window.innerHeight / 3;
+        var current = dashSections[0];
+        for (var i = 0; i < dashSections.length; i++) {
+            if (scrollY >= dashSections[i].section.offsetTop) current = dashSections[i];
+        }
+        dashLinks.forEach(function(l) { l.classList.remove('active'); });
+        if (current) current.link.classList.add('active');
+    }
+
+    // ===== 사이드바 네비게이션 =====
+    var navDots = document.querySelectorAll('.nav-dot[data-target]');
+    var navSections = Array.from(navDots).map(function(dot) {
+        return { dot: dot, section: document.getElementById(dot.dataset.target) };
+    }).filter(function(item) { return item.section; });
+
+    navDots.forEach(function(dot) {
+        dot.addEventListener('click', function() {
+            var target = document.getElementById(dot.dataset.target);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    window.addEventListener('scroll', function() {
+        var scrollY = window.scrollY + window.innerHeight / 3;
+        var current = navSections[0];
+        for (var i = 0; i < navSections.length; i++) {
+            if (scrollY >= navSections[i].section.offsetTop) {
+                current = navSections[i];
+            }
+        }
+        navDots.forEach(function(d) { d.classList.remove('active'); });
+        if (current) current.dot.classList.add('active');
+        updateDashActive();
+    });
 
     // ===== 카테고리 영상 패널 =====
     const categoryCards = document.querySelectorAll('.category-card');

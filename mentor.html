@@ -1,0 +1,1558 @@
+<html lang="ko"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멘토 관리 | 슥 미술 독학 솔루션</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Noto+Sans+KR:wght@400;700;900&family=Outfit:wght@800;900&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --cyan: #00d4ff;
+            --magenta: #ff007f;
+            --indigo: #0a0a20;
+            --white: #ffffff;
+            --black: #000000;
+            --dark-gray: #111111;
+            --font-display: 'Outfit', sans-serif;
+            --font-tech: 'JetBrains Mono', monospace;
+            --font-kr: 'Noto Sans KR', sans-serif;
+            --font-accent: 'Syncopate', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--indigo);
+            color: var(--white);
+            font-family: var(--font-kr);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        ::selection { background: var(--magenta); color: var(--white); }
+
+        /* ===== 상단 네비게이션 ===== */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+            background: rgba(10, 10, 32, 0.95);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .top-nav a {
+            font-family: var(--font-accent);
+            color: var(--cyan);
+            text-decoration: none;
+            font-size: 1rem;
+            letter-spacing: 0.15em;
+        }
+
+        .top-nav-title {
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* ===== 컨테이너 ===== */
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .sys-label {
+            font-family: var(--font-tech);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--cyan);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .sys-label::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--magenta);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+        }
+
+        /* ===== 프로필 섹션 ===== */
+        .profile-section {
+            display: flex;
+            gap: 2rem;
+            padding: 2rem;
+            background: rgba(10, 10, 32, 0.85);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar-wrap {
+            width: 160px;
+            height: 160px;
+            border: 2px dashed rgba(0, 212, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .profile-avatar-wrap:hover { border-color: var(--cyan); }
+        .profile-avatar-wrap.has-image { border-style: solid; border-color: var(--magenta); }
+
+        .profile-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .profile-avatar-wrap.has-image img { display: block; }
+
+        .profile-avatar-placeholder {
+            text-align: center;
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            line-height: 1.8;
+        }
+        .profile-avatar-wrap.has-image .profile-avatar-placeholder { display: none; }
+
+        .profile-fields {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .field-group { display: flex; flex-direction: column; gap: 0.3rem; }
+
+        .field-label {
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .field-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--white);
+            padding: 0.75rem 1rem;
+            font-family: var(--font-kr);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .field-input:focus { border-color: var(--cyan); }
+        textarea.field-input { resize: vertical; min-height: 80px; }
+
+        .btn-primary {
+            font-family: var(--font-tech);
+            font-weight: 800;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.8rem 1.5rem;
+            background: var(--white);
+            color: var(--black);
+            border: 2px solid var(--white);
+            cursor: pointer;
+            transition: all 0.15s;
+            align-self: flex-start;
+        }
+        .btn-primary:hover { background: var(--cyan); border-color: var(--cyan); }
+
+        .btn-danger {
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            padding: 0.4rem 0.8rem;
+            background: none;
+            color: var(--magenta);
+            border: 1px solid var(--magenta);
+            cursor: pointer;
+            transition: all 0.15s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .btn-danger:hover { background: var(--magenta); color: var(--white); }
+
+        .btn-secondary {
+            font-family: var(--font-tech);
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: none;
+            color: var(--cyan);
+            border: 1px solid var(--cyan);
+            cursor: pointer;
+            transition: all 0.15s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .btn-secondary:hover { background: var(--cyan); color: var(--black); }
+
+        /* ===== 영상 업로드 영역 ===== */
+        .upload-area {
+            border: 2px dashed rgba(0, 212, 255, 0.3);
+            background: rgba(0, 212, 255, 0.02);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1.5rem;
+        }
+        .upload-area:hover { border-color: var(--cyan); background: rgba(0, 212, 255, 0.05); }
+        .upload-area.dragging { border-color: var(--magenta); background: rgba(255, 0, 127, 0.05); border-style: solid; }
+
+        .upload-area-text {
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .upload-progress {
+            display: none;
+            margin-top: 1rem;
+        }
+        .upload-progress.active { display: block; }
+
+        .progress-bar-wrap {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            margin-top: 0.5rem;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--cyan);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* ===== 영상 패드 그리드 ===== */
+        .video-pad-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .video-pad {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s;
+            position: relative;
+            cursor: grab;
+        }
+        .video-pad:active { cursor: grabbing; }
+        .video-pad:hover { border-color: rgba(0, 212, 255, 0.4); }
+        .video-pad.dragging {
+            opacity: 0.4;
+            border-color: var(--magenta);
+            transform: scale(0.95);
+        }
+        .video-pad.drag-over {
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        .video-pad-thumb {
+            aspect-ratio: 16 / 9;
+            background: #111;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-pad-thumb video,
+        .video-pad-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .video-pad-play {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .video-pad-play:hover { background: rgba(0,0,0,0.1); }
+        .video-pad-play svg { width: 48px; height: 48px; fill: var(--white); filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6)); }
+
+        .video-pad-body {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .video-pad-title-input {
+            background: none;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            color: var(--white);
+            font-family: var(--font-kr);
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 0.3rem 0;
+            outline: none;
+            width: 100%;
+        }
+        .video-pad-title-input:focus { border-color: var(--cyan); }
+
+        .video-pad-comment {
+            background: rgba(0, 212, 255, 0.03);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            color: rgba(255,255,255,0.8);
+            font-family: var(--font-kr);
+            font-size: 0.82rem;
+            padding: 0.5rem 0.75rem;
+            outline: none;
+            resize: vertical;
+            min-height: 60px;
+            line-height: 1.5;
+            width: 100%;
+        }
+        .video-pad-comment:focus { border-color: var(--cyan); }
+        .video-pad-comment::placeholder { color: rgba(255,255,255,0.25); }
+
+        .video-pad-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .video-pad-order {
+            font-family: var(--font-tech);
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.3);
+            margin-right: auto;
+            letter-spacing: 0.05em;
+        }
+
+        .video-pad-drag-handle {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 5;
+            cursor: grab;
+            touch-action: none;
+        }
+        .video-pad-drag-handle svg {
+            width: 14px;
+            height: 14px;
+            stroke: rgba(255,255,255,0.5);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .pad-btn {
+            font-family: var(--font-tech);
+            font-size: 0.65rem;
+            padding: 0.3rem 0.6rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: none;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.15s;
+        }
+        .pad-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+        .pad-btn.delete:hover { border-color: var(--magenta); color: var(--magenta); }
+
+        /* ===== 비디오 모달 재생 ===== */
+        .video-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0,0,0,0.9);
+            align-items: center;
+            justify-content: center;
+        }
+        .video-modal.active { display: flex; }
+
+        .video-modal-inner {
+            width: 90%;
+            max-width: 900px;
+            position: relative;
+        }
+
+        .video-modal video {
+            width: 100%;
+            max-height: 80vh;
+            background: #000;
+        }
+
+        .video-modal-close {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: var(--white);
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            padding: 0.5rem 0.8rem;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            z-index: 10;
+            min-height: 36px;
+        }
+        .video-modal-close:hover { border-color: var(--magenta); color: var(--magenta); background: var(--magenta); }
+
+        /* ===== 커리큘럼 섹션 ===== */
+        .curriculum-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 212, 255, 0.15);
+        }
+
+        .curriculum-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .curriculum-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 1.25rem;
+            transition: border-color 0.2s;
+        }
+        .curriculum-card:hover { border-color: rgba(0, 212, 255, 0.3); }
+        .curriculum-card.expanded { border-color: var(--cyan); }
+
+        .curriculum-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .curriculum-name {
+            font-family: var(--font-kr);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .curriculum-meta {
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            color: var(--cyan);
+            letter-spacing: 0.05em;
+        }
+
+        .curriculum-body {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .curriculum-card.expanded .curriculum-body { display: block; }
+
+        .curriculum-desc-input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.8);
+            font-family: var(--font-kr);
+            font-size: 0.85rem;
+            padding: 0.6rem 0.8rem;
+            outline: none;
+            width: 100%;
+            margin-bottom: 1rem;
+            resize: vertical;
+            min-height: 50px;
+        }
+        .curriculum-desc-input:focus { border-color: var(--cyan); }
+
+        .curriculum-video-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .curriculum-video-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(0, 212, 255, 0.03);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            cursor: grab;
+        }
+        .curriculum-video-item:active { cursor: grabbing; }
+        .curriculum-video-item.dragging { opacity: 0.4; }
+        .curriculum-video-item.drag-over { border-color: var(--cyan); }
+
+        .curriculum-video-order {
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            color: var(--magenta);
+            min-width: 24px;
+        }
+
+        .curriculum-video-name {
+            font-size: 0.85rem;
+            flex: 1;
+        }
+
+        .curriculum-video-remove {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.3);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0 0.3rem;
+        }
+        .curriculum-video-remove:hover { color: var(--magenta); }
+
+        /* 영상 선택 체크박스 리스트 */
+        .video-selector {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+        }
+        .video-selector.active { display: block; }
+
+        .video-selector-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .video-selector-item input[type="checkbox"] {
+            accent-color: var(--cyan);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .video-selector-item label {
+            font-size: 0.85rem;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* 새 커리큘럼 폼 */
+        .new-curriculum-form {
+            display: none;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--cyan);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .new-curriculum-form.active { display: block; }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+        .form-row .field-group { flex: 1; }
+
+        /* ===== 토스트 알림 ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--cyan);
+            color: var(--black);
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.8rem 1.5rem;
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.error { background: var(--magenta); color: var(--white); }
+
+        /* ===== 빈 상태 ===== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255,255,255,0.3);
+            font-family: var(--font-tech);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            line-height: 2;
+        }
+
+        /* ===== 반응형 ===== */
+        @media (max-width: 768px) {
+            .page-container { padding: 1rem; }
+            .top-nav { padding: 0.75rem 1rem; }
+            .top-nav a { font-size: 0.9rem; }
+
+            .profile-section {
+                flex-direction: column;
+                align-items: center;
+                padding: 1.25rem;
+                gap: 1.25rem;
+            }
+            .profile-avatar-wrap { width: 120px; height: 120px; }
+            .profile-fields { width: 100%; }
+            .section-title { font-size: 2rem; }
+
+            .upload-area { padding: 1.5rem; }
+            .video-pad-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .video-pad-body { padding: 0.75rem; }
+            .video-pad-comment { min-height: 50px; font-size: 0.85rem; }
+
+            .pad-btn {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.7rem;
+                min-height: 36px;
+            }
+            .btn-primary { padding: 0.75rem 1.2rem; font-size: 0.8rem; width: 100%; text-align: center; }
+            .btn-secondary { padding: 0.6rem 1rem; font-size: 0.75rem; min-height: 40px; }
+            .btn-danger { padding: 0.5rem 0.8rem; font-size: 0.7rem; min-height: 36px; }
+
+            .form-row { flex-direction: column; }
+
+            .curriculum-card { padding: 1rem; }
+            .curriculum-video-item { padding: 0.6rem 0.75rem; min-height: 44px; }
+            .curriculum-video-remove { font-size: 1.2rem; padding: 0.2rem 0.5rem; min-width: 36px; min-height: 36px; display: flex; align-items: center; justify-content: center; }
+
+            .video-selector-item { padding: 0.6rem 0; min-height: 44px; }
+            .video-selector-item input[type="checkbox"] { width: 20px; height: 20px; }
+
+            .video-modal-inner { width: 95%; }
+            .video-modal-close {
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+                background: rgba(0,0,0,0.8);
+                z-index: 10;
+            }
+
+            .toast { bottom: 1rem; right: 1rem; left: 1rem; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .profile-avatar-wrap { width: 100px; height: 100px; }
+            .section-title { font-size: 1.75rem; }
+            .field-input { font-size: 16px; } /* iOS 확대 방지 */
+            .video-pad-title-input { font-size: 16px; }
+            .video-pad-comment { font-size: 16px; }
+            .curriculum-desc-input { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 상단 네비게이션 -->
+    <nav class="top-nav">
+        <a href="index.html">SSEUK.ART</a>
+        <span class="top-nav-title">Mentor Dashboard</span>
+    </nav>
+
+    <div class="page-container">
+
+        <!-- ===== 프로필 섹션 ===== -->
+        <section style="margin-bottom: 3rem;">
+            <div class="sys-label">Profile Settings</div>
+            <h2 class="section-title">멘토 프로필</h2>
+
+            <div class="profile-section">
+                <div class="profile-avatar-wrap" id="avatarWrap">
+                    <input type="file" id="avatarInput" accept="image/*" style="display:none">
+                    <div class="profile-avatar-placeholder">프로필 사진<br>클릭하여<br>업로드</div>
+                    <img id="avatarPreview" alt="프로필 사진">
+                </div>
+
+                <div class="profile-fields">
+                    <div class="field-group">
+                        <label class="field-label">이름</label>
+                        <input class="field-input" type="text" id="mentorName" placeholder="멘토 이름 입력">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">전문 분야</label>
+                        <input class="field-input" type="text" id="mentorSpecialty" placeholder="예: Digital / Procreate">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">소개</label>
+                        <textarea class="field-input" id="mentorBio" placeholder="멘토 소개글을 입력하세요"></textarea>
+                    </div>
+                    <button class="btn-primary" id="saveProfileBtn">프로필 저장_</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 강의 영상 관리 ===== -->
+        <section>
+            <div class="sys-label">Module_02: Video Management</div>
+            <h2 class="section-title">강의 영상 관리</h2>
+
+            <!-- 업로드 영역 -->
+            <div class="upload-area" id="videoUploadArea">
+                <input type="file" id="videoFileInput" accept="video/*" style="display:none" multiple>
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" style="margin-bottom:0.75rem">
+                    <rect x="6" y="6" width="36" height="36" rx="2"/>
+                    <line x1="24" y1="14" x2="24" y2="34"/>
+                    <line x1="14" y1="24" x2="34" y2="24"/>
+                </svg>
+                <div class="upload-area-text">강의 영상을 드래그하거나 클릭해서 업로드<br><span style="font-size:0.65rem;color:rgba(255,255,255,0.3)">MP4 · MOV · WEBM · 최대 500MB</span></div>
+                <div class="upload-progress" id="uploadProgress">
+                    <div style="font-family:var(--font-tech);font-size:0.7rem;color:var(--cyan);text-transform:uppercase;letter-spacing:0.08em" id="uploadProgressText">Uploading...</div>
+                    <div class="progress-bar-wrap"><div class="progress-bar" id="uploadProgressBar"></div></div>
+                </div>
+            </div>
+
+            <!-- 영상 패드 그리드 -->
+            <div class="video-pad-grid" id="videoPadGrid">
+                <div class="empty-state" id="videoEmptyState">아직 업로드된 영상이 없습니다<br>위 영역에 영상을 추가해 보세요</div>
+            </div>
+        </section>
+
+        <!-- ===== 커리큘럼 구성 ===== -->
+        <section class="curriculum-section">
+            <div class="sys-label">Module_03: Curriculum Builder</div>
+            <h2 class="section-title">커리큘럼 구성</h2>
+
+            <!-- 새 커리큘럼 생성 폼 -->
+            <div class="new-curriculum-form" id="newCurriculumForm">
+                <div class="form-row">
+                    <div class="field-group">
+                        <label class="field-label">커리큘럼 이름</label>
+                        <input class="field-input" type="text" id="newCurName" placeholder="예: 초보자 기초 드로잉 코스">
+                    </div>
+                </div>
+                <div class="field-group" style="margin-bottom:1rem">
+                    <label class="field-label">설명</label>
+                    <textarea class="field-input" id="newCurDesc" placeholder="커리큘럼 설명" style="min-height:60px"></textarea>
+                </div>
+                <div style="display:flex;gap:0.5rem">
+                    <button class="btn-primary" id="createCurriculumBtn">생성_</button>
+                    <button class="btn-secondary" id="cancelCurriculumBtn">취소</button>
+                </div>
+            </div>
+
+            <div style="margin-bottom:1.5rem">
+                <button class="btn-secondary" id="newCurriculumBtn">+ 새 커리큘럼</button>
+            </div>
+
+            <!-- 커리큘럼 목록 -->
+            <div class="curriculum-list" id="curriculumList">
+                <div class="empty-state" id="curriculumEmptyState">커리큘럼이 없습니다<br>영상을 업로드한 후 커리큘럼을 구성해 보세요</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 비디오 재생 모달 -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-inner">
+            <button class="video-modal-close" id="videoModalClose">✕ 닫기</button>
+            <video controls id="videoModalPlayer"></video>
+        </div>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div class="toast" id="toast"></div>
+
+<script>
+(function() {
+    // ===== 상태 =====
+    const mentorId = new URLSearchParams(window.location.search).get('id') || 'default';
+    let videos = []; // { id, title, video_url, thumbnail_url, comment, sort_order }
+    let curricula = []; // { id, name, description, video_count, videos }
+    let dragSrcIndex = null;
+
+    // ===== DOM =====
+    const avatarWrap = document.getElementById('avatarWrap');
+    const avatarInput = document.getElementById('avatarInput');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const mentorNameInput = document.getElementById('mentorName');
+    const mentorSpecialtyInput = document.getElementById('mentorSpecialty');
+    const mentorBioInput = document.getElementById('mentorBio');
+    const saveProfileBtn = document.getElementById('saveProfileBtn');
+
+    const videoUploadArea = document.getElementById('videoUploadArea');
+    const videoFileInput = document.getElementById('videoFileInput');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const uploadProgressText = document.getElementById('uploadProgressText');
+    const uploadProgressBar = document.getElementById('uploadProgressBar');
+    const videoPadGrid = document.getElementById('videoPadGrid');
+    const videoEmptyState = document.getElementById('videoEmptyState');
+
+    const videoModal = document.getElementById('videoModal');
+    const videoModalPlayer = document.getElementById('videoModalPlayer');
+    const videoModalClose = document.getElementById('videoModalClose');
+
+    const newCurriculumBtn = document.getElementById('newCurriculumBtn');
+    const newCurriculumForm = document.getElementById('newCurriculumForm');
+    const createCurriculumBtn = document.getElementById('createCurriculumBtn');
+    const cancelCurriculumBtn = document.getElementById('cancelCurriculumBtn');
+    const curriculumList = document.getElementById('curriculumList');
+    const curriculumEmptyState = document.getElementById('curriculumEmptyState');
+
+    const toast = document.getElementById('toast');
+
+    // ===== 유틸 =====
+    function showToast(msg, isError) {
+        toast.textContent = msg;
+        toast.className = 'toast show' + (isError ? ' error' : '');
+        setTimeout(function() { toast.className = 'toast'; }, 2500);
+    }
+
+    function escapeHtml(str) {
+        return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    // ===== 프로필 =====
+    avatarWrap.addEventListener('click', function() { avatarInput.click(); });
+
+    avatarInput.addEventListener('change', async function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+
+        // 로컬 미리보기
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+            avatarPreview.src = ev.target.result;
+            avatarWrap.classList.add('has-image');
+        };
+        reader.readAsDataURL(file);
+
+        // Supabase 업로드
+        var fd = new FormData();
+        fd.append('file', file);
+        fd.append('bucket', 'mentor-profiles');
+        fd.append('mentor_id', mentorId);
+
+        try {
+            var res = await fetch('/api/mentor-upload', { method: 'POST', body: fd });
+            var data = await res.json();
+            if (data.url) {
+                avatarPreview.dataset.url = data.url;
+                showToast('프로필 사진 업로드 완료');
+            } else {
+                showToast(data.error || '업로드 실패', true);
+            }
+        } catch (err) {
+            showToast('업로드 중 오류 발생', true);
+        }
+    });
+
+    saveProfileBtn.addEventListener('click', async function() {
+        var payload = {
+            id: mentorId,
+            name: mentorNameInput.value,
+            specialty: mentorSpecialtyInput.value,
+            bio: mentorBioInput.value,
+        };
+        if (avatarPreview.dataset.url) {
+            payload.profile_image_url = avatarPreview.dataset.url;
+        }
+
+        try {
+            await fetch('/api/mentors', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            showToast('프로필 저장 완료');
+        } catch (err) {
+            showToast('저장 실패', true);
+        }
+    });
+
+    // ===== 프로필 로드 =====
+    async function loadProfile() {
+        try {
+            var res = await fetch('/api/mentors?id=' + mentorId);
+            var data = await res.json();
+            if (data && data.name) {
+                mentorNameInput.value = data.name || '';
+                mentorSpecialtyInput.value = data.specialty || '';
+                mentorBioInput.value = data.bio || '';
+                if (data.profile_image_url) {
+                    avatarPreview.src = data.profile_image_url;
+                    avatarPreview.dataset.url = data.profile_image_url;
+                    avatarWrap.classList.add('has-image');
+                }
+            }
+        } catch (e) { /* 새 멘토 */ }
+    }
+
+    // ===== 영상 업로드 =====
+    videoUploadArea.addEventListener('click', function(e) {
+        if (e.target.closest('.upload-progress')) return;
+        videoFileInput.click();
+    });
+
+    videoUploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        videoUploadArea.classList.add('dragging');
+    });
+    videoUploadArea.addEventListener('dragleave', function(e) {
+        if (!videoUploadArea.contains(e.relatedTarget)) videoUploadArea.classList.remove('dragging');
+    });
+    videoUploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        videoUploadArea.classList.remove('dragging');
+        var files = Array.from(e.dataTransfer.files).filter(function(f) { return f.type.startsWith('video/'); });
+        if (files.length > 0) uploadVideos(files);
+    });
+
+    videoFileInput.addEventListener('change', function(e) {
+        var files = Array.from(e.target.files);
+        if (files.length > 0) uploadVideos(files);
+        videoFileInput.value = '';
+    });
+
+    async function uploadVideos(files) {
+        uploadProgress.classList.add('active');
+
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            uploadProgressText.textContent = 'Uploading ' + (i + 1) + ' / ' + files.length + '...';
+            uploadProgressBar.style.width = '10%';
+
+            var fd = new FormData();
+            fd.append('file', file);
+            fd.append('bucket', 'mentor-videos');
+            fd.append('mentor_id', mentorId);
+
+            try {
+                uploadProgressBar.style.width = '50%';
+                var res = await fetch('/api/mentor-upload', { method: 'POST', body: fd });
+                var data = await res.json();
+                uploadProgressBar.style.width = '80%';
+
+                if (data.url) {
+                    // DB에 영상 레코드 생성
+                    var videoRes = await fetch('/api/mentor-videos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            mentor_id: mentorId,
+                            title: file.name.replace(/\.[^.]+$/, ''),
+                            video_url: data.url,
+                            thumbnail_url: '',
+                            comment: '',
+                            sort_order: videos.length,
+                        }),
+                    });
+                    var videoData = await videoRes.json();
+
+                    if (Array.isArray(videoData) && videoData.length > 0) {
+                        videos.push(videoData[0]);
+                    } else if (videoData.id) {
+                        videos.push(videoData);
+                    }
+
+                    uploadProgressBar.style.width = '100%';
+                    showToast(file.name + ' 업로드 완료');
+                } else {
+                    showToast(data.error || '업로드 실패', true);
+                }
+            } catch (err) {
+                showToast('업로드 중 오류 발생', true);
+            }
+        }
+
+        uploadProgress.classList.remove('active');
+        uploadProgressBar.style.width = '0%';
+        renderVideoPads();
+    }
+
+    // ===== 영상 목록 로드 =====
+    async function loadVideos() {
+        try {
+            var res = await fetch('/api/mentor-videos?mentor_id=' + mentorId);
+            videos = await res.json();
+            if (!Array.isArray(videos)) videos = [];
+            renderVideoPads();
+        } catch (e) {
+            videos = [];
+            renderVideoPads();
+        }
+    }
+
+    // ===== 영상 패드 렌더링 =====
+    function renderVideoPads() {
+        videoPadGrid.innerHTML = '';
+        if (videos.length === 0) {
+            videoPadGrid.appendChild(videoEmptyState);
+            videoEmptyState.style.display = '';
+            return;
+        }
+
+        videos.forEach(function(video, idx) {
+            var pad = document.createElement('div');
+            pad.className = 'video-pad';
+            pad.draggable = true;
+            pad.dataset.index = idx;
+
+            // 썸네일 영역
+            var thumbDiv = document.createElement('div');
+            thumbDiv.className = 'video-pad-thumb';
+
+            var videoEl = document.createElement('video');
+            videoEl.src = video.video_url;
+            videoEl.preload = 'metadata';
+            videoEl.muted = true;
+
+            var playBtn = document.createElement('div');
+            playBtn.className = 'video-pad-play';
+            playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+
+            var dragHandle = document.createElement('div');
+            dragHandle.className = 'video-pad-drag-handle';
+            dragHandle.innerHTML = '<svg viewBox="0 0 14 14"><line x1="3" y1="4" x2="11" y2="4"/><line x1="3" y1="7" x2="11" y2="7"/><line x1="3" y1="10" x2="11" y2="10"/></svg>';
+
+            thumbDiv.appendChild(videoEl);
+            thumbDiv.appendChild(playBtn);
+            thumbDiv.appendChild(dragHandle);
+
+            // 재생 클릭
+            playBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                openVideoModal(video.video_url);
+            });
+
+            // 바디
+            var bodyDiv = document.createElement('div');
+            bodyDiv.className = 'video-pad-body';
+
+            var titleInput = document.createElement('input');
+            titleInput.className = 'video-pad-title-input';
+            titleInput.type = 'text';
+            titleInput.value = video.title || '';
+            titleInput.placeholder = '영상 제목';
+            titleInput.addEventListener('blur', function() {
+                updateVideo(video.id, { title: titleInput.value });
+            });
+
+            var commentArea = document.createElement('textarea');
+            commentArea.className = 'video-pad-comment';
+            commentArea.value = video.comment || '';
+            commentArea.placeholder = '이 영상에 대한 코멘트를 입력하세요...';
+            commentArea.addEventListener('blur', function() {
+                updateVideo(video.id, { comment: commentArea.value });
+            });
+
+            var actionsDiv = document.createElement('div');
+            actionsDiv.className = 'video-pad-actions';
+
+            var orderSpan = document.createElement('span');
+            orderSpan.className = 'video-pad-order';
+            orderSpan.textContent = '#' + (idx + 1);
+
+            var saveBtn = document.createElement('button');
+            saveBtn.className = 'pad-btn';
+            saveBtn.textContent = 'SAVE';
+            saveBtn.addEventListener('click', function() {
+                updateVideo(video.id, { title: titleInput.value, comment: commentArea.value });
+                showToast('저장 완료');
+            });
+
+            var deleteBtn = document.createElement('button');
+            deleteBtn.className = 'pad-btn delete';
+            deleteBtn.textContent = 'DEL';
+            deleteBtn.addEventListener('click', function() {
+                if (confirm('이 영상을 삭제하시겠습니까?')) {
+                    deleteVideo(video.id, idx);
+                }
+            });
+
+            actionsDiv.appendChild(orderSpan);
+            actionsDiv.appendChild(saveBtn);
+            actionsDiv.appendChild(deleteBtn);
+
+            bodyDiv.appendChild(titleInput);
+            bodyDiv.appendChild(commentArea);
+            bodyDiv.appendChild(actionsDiv);
+
+            pad.appendChild(thumbDiv);
+            pad.appendChild(bodyDiv);
+
+            // ===== Drag & Drop =====
+            pad.addEventListener('dragstart', function(e) {
+                dragSrcIndex = idx;
+                pad.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', idx);
+            });
+
+            pad.addEventListener('dragend', function() {
+                pad.classList.remove('dragging');
+                videoPadGrid.querySelectorAll('.video-pad').forEach(function(p) {
+                    p.classList.remove('drag-over');
+                });
+            });
+
+            pad.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                pad.classList.add('drag-over');
+            });
+
+            pad.addEventListener('dragleave', function() {
+                pad.classList.remove('drag-over');
+            });
+
+            pad.addEventListener('drop', function(e) {
+                e.preventDefault();
+                pad.classList.remove('drag-over');
+                var fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+                var toIdx = idx;
+
+                if (fromIdx === toIdx) return;
+
+                var item = videos.splice(fromIdx, 1)[0];
+                videos.splice(toIdx, 0, item);
+
+                // 순서 업데이트
+                var reorderItems = videos.map(function(v, i) {
+                    v.sort_order = i;
+                    return { id: v.id, sort_order: i };
+                });
+
+                fetch('/api/mentor-videos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reorder: true, items: reorderItems }),
+                }).catch(function() {});
+
+                renderVideoPads();
+                showToast('순서 변경 완료');
+            });
+
+            videoPadGrid.appendChild(pad);
+        });
+    }
+
+    // ===== 영상 수정/삭제 =====
+    async function updateVideo(id, updates) {
+        try {
+            await fetch('/api/mentor-videos', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, ...updates }),
+            });
+        } catch (e) {
+            showToast('수정 실패', true);
+        }
+    }
+
+    async function deleteVideo(id, idx) {
+        try {
+            await fetch('/api/mentor-videos?id=' + id, { method: 'DELETE' });
+            videos.splice(idx, 1);
+            renderVideoPads();
+            showToast('영상 삭제 완료');
+        } catch (e) {
+            showToast('삭제 실패', true);
+        }
+    }
+
+    // ===== 비디오 모달 =====
+    function openVideoModal(url) {
+        videoModalPlayer.src = url;
+        videoModal.classList.add('active');
+        videoModalPlayer.play();
+    }
+
+    videoModalClose.addEventListener('click', function() {
+        videoModal.classList.remove('active');
+        videoModalPlayer.pause();
+        videoModalPlayer.src = '';
+    });
+
+    videoModal.addEventListener('click', function(e) {
+        if (e.target === videoModal) {
+            videoModal.classList.remove('active');
+            videoModalPlayer.pause();
+            videoModalPlayer.src = '';
+        }
+    });
+
+    // ===== 커리큘럼 =====
+    newCurriculumBtn.addEventListener('click', function() {
+        newCurriculumForm.classList.add('active');
+        newCurriculumBtn.style.display = 'none';
+        document.getElementById('newCurName').focus();
+    });
+
+    cancelCurriculumBtn.addEventListener('click', function() {
+        newCurriculumForm.classList.remove('active');
+        newCurriculumBtn.style.display = '';
+        document.getElementById('newCurName').value = '';
+        document.getElementById('newCurDesc').value = '';
+    });
+
+    createCurriculumBtn.addEventListener('click', async function() {
+        var name = document.getElementById('newCurName').value.trim();
+        if (!name) { showToast('커리큘럼 이름을 입력하세요', true); return; }
+
+        try {
+            var res = await fetch('/api/curricula', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    mentor_id: mentorId,
+                    name: name,
+                    description: document.getElementById('newCurDesc').value,
+                }),
+            });
+            var data = await res.json();
+            if (Array.isArray(data) && data.length > 0) {
+                curricula.unshift({ ...data[0], video_count: 0 });
+            } else if (data.id) {
+                curricula.unshift({ ...data, video_count: 0 });
+            }
+
+            cancelCurriculumBtn.click();
+            renderCurricula();
+            showToast('커리큘럼 생성 완료');
+        } catch (e) {
+            showToast('생성 실패', true);
+        }
+    });
+
+    async function loadCurricula() {
+        try {
+            var res = await fetch('/api/curricula?mentor_id=' + mentorId);
+            curricula = await res.json();
+            if (!Array.isArray(curricula)) curricula = [];
+            renderCurricula();
+        } catch (e) {
+            curricula = [];
+            renderCurricula();
+        }
+    }
+
+    function renderCurricula() {
+        curriculumList.innerHTML = '';
+        if (curricula.length === 0) {
+            curriculumList.appendChild(curriculumEmptyState);
+            curriculumEmptyState.style.display = '';
+            return;
+        }
+
+        curricula.forEach(function(cur, ci) {
+            var card = document.createElement('div');
+            card.className = 'curriculum-card';
+            card.dataset.id = cur.id;
+
+            // 헤더
+            var header = document.createElement('div');
+            header.className = 'curriculum-header';
+            header.innerHTML = '<span class="curriculum-name">' + escapeHtml(cur.name) + '</span>'
+                + '<span class="curriculum-meta">' + (cur.video_count || 0) + ' VIDEOS</span>';
+
+            header.addEventListener('click', function() {
+                card.classList.toggle('expanded');
+                if (card.classList.contains('expanded') && !card.dataset.loaded) {
+                    loadCurriculumDetail(cur.id, card);
+                    card.dataset.loaded = 'true';
+                }
+            });
+
+            // 바디
+            var body = document.createElement('div');
+            body.className = 'curriculum-body';
+
+            var descInput = document.createElement('textarea');
+            descInput.className = 'curriculum-desc-input';
+            descInput.value = cur.description || '';
+            descInput.placeholder = '커리큘럼 설명';
+            descInput.addEventListener('blur', function() {
+                fetch('/api/curricula', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: cur.id, description: descInput.value }),
+                });
+            });
+
+            var videoListDiv = document.createElement('div');
+            videoListDiv.className = 'curriculum-video-list';
+            videoListDiv.id = 'curVideos-' + cur.id;
+
+            // 영상 추가 버튼
+            var addVideoBtn = document.createElement('button');
+            addVideoBtn.className = 'btn-secondary';
+            addVideoBtn.textContent = '+ 영상 추가';
+            addVideoBtn.style.marginBottom = '0.75rem';
+
+            var videoSelector = document.createElement('div');
+            videoSelector.className = 'video-selector';
+            videoSelector.id = 'selector-' + cur.id;
+
+            addVideoBtn.addEventListener('click', function() {
+                videoSelector.classList.toggle('active');
+                if (videoSelector.classList.contains('active')) {
+                    renderVideoSelector(cur.id, videoSelector);
+                }
+            });
+
+            var actionsDiv = document.createElement('div');
+            actionsDiv.style.cssText = 'display:flex;gap:0.5rem;margin-top:1rem';
+
+            var saveVidsBtn = document.createElement('button');
+            saveVidsBtn.className = 'btn-primary';
+            saveVidsBtn.textContent = '영상 목록 저장_';
+            saveVidsBtn.style.fontSize = '0.75rem';
+            saveVidsBtn.addEventListener('click', function() {
+                saveCurriculumVideos(cur.id);
+            });
+
+            var delCurBtn = document.createElement('button');
+            delCurBtn.className = 'btn-danger';
+            delCurBtn.textContent = '커리큘럼 삭제';
+            delCurBtn.addEventListener('click', function() {
+                if (confirm('이 커리큘럼을 삭제하시겠습니까?')) {
+                    deleteCurriculum(cur.id, ci);
+                }
+            });
+
+            actionsDiv.appendChild(saveVidsBtn);
+            actionsDiv.appendChild(delCurBtn);
+
+            body.appendChild(descInput);
+            body.appendChild(videoListDiv);
+            body.appendChild(addVideoBtn);
+            body.appendChild(videoSelector);
+            body.appendChild(actionsDiv);
+
+            card.appendChild(header);
+            card.appendChild(body);
+            curriculumList.appendChild(card);
+        });
+    }
+
+    async function loadCurriculumDetail(curId, card) {
+        try {
+            var res = await fetch('/api/curricula?id=' + curId);
+            var data = await res.json();
+            if (data.videos) {
+                renderCurriculumVideos(curId, data.videos);
+            }
+        } catch (e) { /* ignore */ }
+    }
+
+    function renderCurriculumVideos(curId, cvList) {
+        var container = document.getElementById('curVideos-' + curId);
+        container.innerHTML = '';
+        container.dataset.videos = JSON.stringify(cvList.map(function(cv) {
+            return cv.video_id || (cv.mentor_videos && cv.mentor_videos.id);
+        }).filter(Boolean));
+
+        if (cvList.length === 0) {
+            container.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-family:var(--font-tech);font-size:0.75rem;padding:0.5rem 0">NO VIDEOS ASSIGNED</div>';
+            return;
+        }
+
+        cvList.forEach(function(cv, i) {
+            var videoInfo = cv.mentor_videos || cv;
+            var item = document.createElement('div');
+            item.className = 'curriculum-video-item';
+            item.draggable = true;
+            item.dataset.videoId = cv.video_id || videoInfo.id;
+            item.dataset.index = i;
+
+            item.innerHTML = '<span class="curriculum-video-order">' + (i + 1) + '</span>'
+                + '<span class="curriculum-video-name">' + escapeHtml(videoInfo.title || '제목 없음') + '</span>'
+                + '<button class="curriculum-video-remove" title="제거">✕</button>';
+
+            item.querySelector('.curriculum-video-remove').addEventListener('click', function() {
+                item.remove();
+                updateCurriculumVideoOrder(curId);
+            });
+
+            // 커리큘럼 내 드래그 정렬
+            item.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', i);
+                item.classList.add('dragging');
+            });
+            item.addEventListener('dragend', function() { item.classList.remove('dragging'); });
+            item.addEventListener('dragover', function(e) { e.preventDefault(); item.classList.add('drag-over'); });
+            item.addEventListener('dragleave', function() { item.classList.remove('drag-over'); });
+            item.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                item.classList.remove('drag-over');
+                var from = parseInt(e.dataTransfer.getData('text/plain'));
+                var to = i;
+                if (from === to) return;
+
+                var items = Array.from(container.children);
+                var movedItem = items[from];
+                if (from < to) {
+                    container.insertBefore(movedItem, items[to].nextSibling);
+                } else {
+                    container.insertBefore(movedItem, items[to]);
+                }
+                updateCurriculumVideoOrder(curId);
+            });
+
+            container.appendChild(item);
+        });
+    }
+
+    function updateCurriculumVideoOrder(curId) {
+        var container = document.getElementById('curVideos-' + curId);
+        var items = container.querySelectorAll('.curriculum-video-item');
+        items.forEach(function(item, i) {
+            item.querySelector('.curriculum-video-order').textContent = (i + 1);
+            item.dataset.index = i;
+        });
+    }
+
+    function renderVideoSelector(curId, selectorEl) {
+        selectorEl.innerHTML = '';
+        if (videos.length === 0) {
+            selectorEl.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-family:var(--font-tech);font-size:0.75rem">NO VIDEOS AVAILABLE</div>';
+            return;
+        }
+
+        // 이미 추가된 영상 ID
+        var container = document.getElementById('curVideos-' + curId);
+        var existingIds = Array.from(container.querySelectorAll('.curriculum-video-item')).map(function(el) { return el.dataset.videoId; });
+
+        videos.forEach(function(v) {
+            var item = document.createElement('div');
+            item.className = 'video-selector-item';
+
+            var cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.value = v.id;
+            cb.id = 'sel-' + curId + '-' + v.id;
+            if (existingIds.indexOf(v.id) !== -1) cb.checked = true;
+
+            var label = document.createElement('label');
+            label.htmlFor = cb.id;
+            label.textContent = v.title || '제목 없음';
+
+            cb.addEventListener('change', function() {
+                if (cb.checked) {
+                    // 추가
+                    var cvItem = { video_id: v.id, mentor_videos: v };
+                    var curVideosContainer = document.getElementById('curVideos-' + curId);
+                    var currentItems = curVideosContainer.querySelectorAll('.curriculum-video-item');
+                    var newList = Array.from(currentItems).map(function(el, i) {
+                        return { video_id: el.dataset.videoId, mentor_videos: videos.find(function(vv) { return vv.id === el.dataset.videoId; }) || { title: '제목 없음' } };
+                    });
+                    newList.push(cvItem);
+                    renderCurriculumVideos(curId, newList);
+                } else {
+                    // 제거
+                    var toRemove = container.querySelector('[data-video-id="' + v.id + '"]');
+                    if (toRemove) toRemove.remove();
+                    updateCurriculumVideoOrder(curId);
+                }
+            });
+
+            item.appendChild(cb);
+            item.appendChild(label);
+            selectorEl.appendChild(item);
+        });
+
+        var doneBtn = document.createElement('button');
+        doneBtn.className = 'btn-secondary';
+        doneBtn.textContent = '완료';
+        doneBtn.style.marginTop = '0.75rem';
+        doneBtn.addEventListener('click', function() { selectorEl.classList.remove('active'); });
+        selectorEl.appendChild(doneBtn);
+    }
+
+    async function saveCurriculumVideos(curId) {
+        var container = document.getElementById('curVideos-' + curId);
+        var items = container.querySelectorAll('.curriculum-video-item');
+        var videoIds = Array.from(items).map(function(el) { return el.dataset.videoId; });
+
+        try {
+            await fetch('/api/curricula', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'set_videos',
+                    curriculum_id: curId,
+                    video_ids: videoIds,
+                }),
+            });
+
+            // 카운트 업데이트
+            var cur = curricula.find(function(c) { return c.id === curId; });
+            if (cur) cur.video_count = videoIds.length;
+
+            showToast('커리큘럼 저장 완료');
+        } catch (e) {
+            showToast('저장 실패', true);
+        }
+    }
+
+    async function deleteCurriculum(curId, ci) {
+        try {
+            await fetch('/api/curricula?id=' + curId, { method: 'DELETE' });
+            curricula.splice(ci, 1);
+            renderCurricula();
+            showToast('커리큘럼 삭제 완료');
+        } catch (e) {
+            showToast('삭제 실패', true);
+        }
+    }
+
+    // ===== 초기 로드 =====
+    loadProfile();
+    loadVideos();
+    loadCurricula();
+})();
+</script>
+</body></html>
