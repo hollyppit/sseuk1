@@ -1187,6 +1187,62 @@
         .fav-edit-btn:hover { border-color: var(--cyan); color: var(--cyan); }
         .fav-edit-btn.del:hover { border-color: var(--magenta); color: var(--magenta); }
 
+        /* ===== 하단 고정 탭바 ===== */
+        .tab-bar {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(10, 10, 32, 0.96);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 212, 255, 0.3);
+            display: flex;
+            z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 0.85rem 0.4rem 0.7rem;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            transition: color 0.2s;
+            position: relative;
+            font-family: var(--font-tech);
+        }
+        .tab-btn svg {
+            width: 22px; height: 22px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .tab-btn span {
+            font-size: 0.62rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .tab-btn:hover { color: var(--cyan); }
+        .tab-btn.active { color: var(--magenta); }
+        .tab-btn.active svg { stroke-width: 2.2; }
+        .tab-btn.active::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 22%; right: 22%;
+            height: 2px;
+            background: var(--magenta);
+        }
+        /* 탭바 공간 확보 */
+        body { padding-bottom: 70px; }
+        /* 데스크톱: 사이드 nav 있으면 모바일 dash btn 숨김 */
+        @media (min-width: 769px) {
+            .mobile-dash-btn { display: none; }
+        }
+
         /* ===== 반응형 ===== */
         @media (max-width: 1024px) {
             .hero-typographic-cluster { width: 100%; }
@@ -1756,6 +1812,29 @@
         </section>
 
     </main>
+
+    <nav class="tab-bar" id="tabBar">
+        <button class="tab-btn active" data-target="hero">
+            <svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7M5 9v11a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V9"/></svg>
+            <span>Home</span>
+        </button>
+        <button class="tab-btn" data-target="analyze">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5"/></svg>
+            <span>분석</span>
+        </button>
+        <button class="tab-btn" data-target="mentors">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+            <span>멘토</span>
+        </button>
+        <button class="tab-btn" data-target="categories">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            <span>카테고리</span>
+        </button>
+        <button class="tab-btn" data-target="saved">
+            <svg viewBox="0 0 24 24"><polygon points="12,2 15,9 22,9.5 17,14.5 18.5,21.5 12,18 5.5,21.5 7,14.5 2,9.5 9,9"/></svg>
+            <span>보드</span>
+        </button>
+    </nav>
 
 <script>
 // ══════════════════════════════════════════
@@ -2345,19 +2424,23 @@ document.addEventListener('DOMContentLoaded', SseukFav.init);
         if (current) current.link.classList.add('active');
     }
 
-    // ===== 사이드바 네비게이션 =====
+    // ===== 사이드바 + 하단 탭바 네비게이션 =====
     var navDots = document.querySelectorAll('.nav-dot[data-target]');
+    var tabBtns = document.querySelectorAll('.tab-btn[data-target]');
     var navSections = Array.from(navDots).map(function(dot) {
         return { dot: dot, section: document.getElementById(dot.dataset.target) };
     }).filter(function(item) { return item.section; });
 
+    function scrollToTarget(id) {
+        var target = document.getElementById(id);
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
+
     navDots.forEach(function(dot) {
-        dot.addEventListener('click', function() {
-            var target = document.getElementById(dot.dataset.target);
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
-            }
-        });
+        dot.addEventListener('click', function() { scrollToTarget(dot.dataset.target); });
+    });
+    tabBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() { scrollToTarget(btn.dataset.target); });
     });
 
     window.addEventListener('scroll', function() {
@@ -2369,7 +2452,12 @@ document.addEventListener('DOMContentLoaded', SseukFav.init);
             }
         }
         navDots.forEach(function(d) { d.classList.remove('active'); });
-        if (current) current.dot.classList.add('active');
+        tabBtns.forEach(function(b) { b.classList.remove('active'); });
+        if (current) {
+            current.dot.classList.add('active');
+            var activeId = current.dot.dataset.target;
+            tabBtns.forEach(function(b) { if (b.dataset.target === activeId) b.classList.add('active'); });
+        }
         updateDashActive();
     });
 
