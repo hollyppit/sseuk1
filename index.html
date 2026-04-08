@@ -1030,6 +1030,34 @@
             transition: all 0.15s;
         }
         .video-modal-close:hover { background: var(--magenta); border-color: var(--magenta); }
+        .video-modal-fullscreen {
+            position: absolute;
+            top: -54px; right: 110px;
+            background: rgba(0,0,0,0.85);
+            border: 1.5px solid rgba(255,255,255,0.3);
+            color: var(--white);
+            font-family: var(--font-tech);
+            font-size: 0.75rem;
+            padding: 0.5rem 0.9rem;
+            cursor: pointer;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: all 0.15s;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .video-modal-fullscreen:hover { background: var(--cyan); border-color: var(--cyan); color: #000; }
+        .video-modal.fullscreen { padding: 0; }
+        .video-modal.fullscreen .video-modal-inner {
+            max-width: none;
+            width: 100vw; height: 100vh;
+            aspect-ratio: unset;
+            border: none; box-shadow: none;
+        }
+        .video-modal.fullscreen .video-modal-close { top: 0.75rem; right: 0.75rem; }
+        .video-modal.fullscreen .video-modal-fullscreen { top: 0.75rem; right: 7.5rem; }
+        .video-modal.fullscreen .video-modal-title { top: 0.75rem; left: 1rem; right: 14rem; }
+        .video-modal.fullscreen .fav-star-btn { top: 0.75rem; left: 1rem; }
+        .video-modal.fullscreen .video-modal-title { left: 5rem; }
         .video-modal-title {
             position: absolute;
             top: -54px; left: 0;
@@ -1867,7 +1895,7 @@
             <div class="saved-toolbar">
                 <div class="saved-breadcrumb" id="savedBreadcrumb"><span class="bc-current">전체</span></div>
                 <button class="btn-saved-tool" id="btnNewFolder">+ 새 폴더</button>
-                <button class="btn-saved-tool" id="btnEditMode">EDIT</button>
+                <button class="btn-saved-tool" id="btnEditMode">편집</button>
             </div>
             <div class="saved-grid" id="savedGrid"></div>
         </section>
@@ -1877,6 +1905,7 @@
     <div class="video-modal" id="videoModal">
         <div class="video-modal-inner">
             <div class="video-modal-title" id="videoModalTitle"></div>
+            <button class="video-modal-fullscreen" id="videoModalFs">⛶ 전체보기</button>
             <button class="video-modal-close" id="videoModalClose">✕ 닫기</button>
             <div id="videoModalIframe"></div>
         </div>
@@ -1968,10 +1997,11 @@ window.SseukFav = (function() {
     }
 
     function openFolder(id) {
+        if (Date.now() < _suppressClickUntil) return;
         currentFolder = id;
         editMode = false;
         const btn = document.getElementById('btnEditMode');
-        if (btn) { btn.classList.remove('active'); btn.textContent = 'EDIT'; }
+        if (btn) { btn.classList.remove('active'); btn.textContent = '편집'; }
         render();
     }
 
@@ -1982,8 +2012,8 @@ window.SseukFav = (function() {
         const btn = document.getElementById('btnEditMode');
         const grid = document.getElementById('savedGrid');
         if (!btn || !grid) return;
-        if (editMode) { btn.classList.add('active'); btn.textContent = 'DONE'; grid.classList.add('edit-mode'); }
-        else { btn.classList.remove('active'); btn.textContent = 'EDIT'; grid.classList.remove('edit-mode'); }
+        if (editMode) { btn.classList.add('active'); btn.textContent = '완료'; grid.classList.add('edit-mode'); }
+        else { btn.classList.remove('active'); btn.textContent = '편집'; grid.classList.remove('edit-mode'); }
         render();
     }
 
@@ -2022,12 +2052,14 @@ window.SseukFav = (function() {
             return;
         }
 
+        const dragAttrs = ' ondragstart="SseukFav._dragStart(event,IDX)" ondragover="SseukFav._dragOver(event,this)" ondragleave="this.classList.remove(\'drag-over\')" ondrop="SseukFav._drop(event,IDX,this)" ondragend="SseukFav._dragEnd(event,this)"';
+
         grid.innerHTML = list.map((item, idx) => {
+            const drag = dragAttrs.replace(/IDX/g, idx);
             if (item.type === 'folder') {
                 const childCount = items.filter(f => f.folderId === item.id).length;
-                return '<div class="fav-folder" draggable="' + editMode + '" data-idx="' + idx + '" data-id="' + item.id + '"' +
-                    (editMode ? ' ondragstart="SseukFav._dragStart(event,' + idx + ')" ondragover="SseukFav._dragOver(event,this)" ondragleave="this.classList.remove(\'drag-over\')" ondrop="SseukFav._drop(event,' + idx + ',this)"' : '') +
-                    ' onclick="' + (editMode ? '' : 'SseukFav.openFolder(\'' + item.id + '\')') + '">' +
+                return '<div class="fav-folder" draggable="true" data-idx="' + idx + '" data-id="' + item.id + '"' + drag +
+                    ' onclick="SseukFav.openFolder(\'' + item.id + '\')">' +
                         '<div class="fav-edit-overlay">' +
                             '<button class="fav-edit-btn" onclick="event.stopPropagation();SseukFav._startRename(\'' + item.id + '\',\'folder\')" title="이름 변경">✎</button>' +
                             '<button class="fav-edit-btn del" onclick="event.stopPropagation();SseukFav.remove(\'' + item.id + '\')" title="삭제">✕</button>' +
@@ -2037,10 +2069,10 @@ window.SseukFav = (function() {
                         '<div class="fav-folder-count">' + childCount + ' ITEMS</div>' +
                     '</div>';
             } else {
-                return '<div class="fav-card" draggable="' + editMode + '" data-idx="' + idx + '" data-id="' + item.id + '"' +
-                    (editMode ? ' ondragstart="SseukFav._dragStart(event,' + idx + ')" ondragover="SseukFav._dragOver(event,this)" ondragleave="this.classList.remove(\'drag-over\')" ondrop="SseukFav._drop(event,' + idx + ',this)"' : '') +
-                    ' onclick="' + (editMode ? '' : 'SseukFav._play(\'' + item.id + '\')') + '">' +
+                return '<div class="fav-card" draggable="true" data-idx="' + idx + '" data-id="' + item.id + '"' + drag +
+                    ' onclick="SseukFav._play(\'' + item.id + '\')">' +
                         '<div class="fav-edit-overlay">' +
+                            '<button class="fav-edit-btn" onclick="event.stopPropagation();SseukFav._startRename(\'' + item.id + '\',\'video\')" title="이름 변경">✎</button>' +
                             '<button class="fav-edit-btn del" onclick="event.stopPropagation();SseukFav.remove(\'' + item.id + '\')" title="즐겨찾기 해제">✕</button>' +
                         '</div>' +
                         '<div class="fav-thumb"><img src="' + esc(item.thumb) + '" alt="" loading="lazy"></div>' +
@@ -2055,16 +2087,25 @@ window.SseukFav = (function() {
         syncStarButtons();
     }
 
+    let _suppressClickUntil = 0;
     function _dragStart(e, idx) {
         dragIdx = idx;
         e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', String(idx)); } catch (err) {}
         const el = e.target.closest('.fav-card,.fav-folder');
         if (el) setTimeout(() => el.classList.add('dragging'), 0);
     }
-    function _dragOver(e, el) { e.preventDefault(); el.classList.add('drag-over'); }
+    function _dragEnd(e, el) {
+        if (el) el.classList.remove('dragging');
+        document.querySelectorAll('.fav-card.drag-over,.fav-folder.drag-over').forEach(n => n.classList.remove('drag-over'));
+        _suppressClickUntil = Date.now() + 300;
+    }
+    function _dragOver(e, el) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; el.classList.add('drag-over'); }
     function _drop(e, targetIdx, el) {
         e.preventDefault();
+        e.stopPropagation();
         el.classList.remove('drag-over');
+        _suppressClickUntil = Date.now() + 300;
         const list = items
             .filter(f => (f.folderId || null) === currentFolder)
             .sort((a, b) => (a.order || 0) - (b.order || 0));
@@ -2111,10 +2152,17 @@ window.SseukFav = (function() {
     }
 
     function _play(id) {
+        if (Date.now() < _suppressClickUntil) return;
         const item = items.find(f => f.id === id);
         if (!item || item.type === 'folder') return;
-        // 새 창으로 유튜브 열기
-        window.open('https://www.youtube.com/watch?v=' + item.videoId, '_blank');
+        if (window.openVideoModal) {
+            window.openVideoModal({
+                videoId: item.videoId,
+                title: item.title,
+                channel: item.channel,
+                thumb: item.thumb,
+            });
+        }
     }
 
     // 영상 카드의 ★ 버튼 상태를 현재 favorites와 동기화
@@ -2191,15 +2239,23 @@ window.closeVideoModal = function() {
     const iframeWrap = document.getElementById('videoModalIframe');
     if (!modal) return;
     modal.classList.remove('active');
+    modal.classList.remove('fullscreen');
     if (iframeWrap) iframeWrap.innerHTML = '';
     const star = modal.querySelector('.fav-star-btn');
     if (star) star.remove();
     document.body.style.overflow = '';
 };
+window.toggleVideoModalFullscreen = function() {
+    const modal = document.getElementById('videoModal');
+    if (!modal) return;
+    modal.classList.toggle('fullscreen');
+};
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('videoModal');
     const closeBtn = document.getElementById('videoModalClose');
     if (closeBtn) closeBtn.addEventListener('click', window.closeVideoModal);
+    const fsBtn = document.getElementById('videoModalFs');
+    if (fsBtn) fsBtn.addEventListener('click', window.toggleVideoModalFullscreen);
     if (modal) modal.addEventListener('click', function(e) {
         if (e.target === modal) window.closeVideoModal();
     });
