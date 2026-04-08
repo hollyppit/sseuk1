@@ -2225,7 +2225,7 @@ window.openVideoModal = function(video) {
     if (!modal || !iframeWrap) return;
 
     titleEl.textContent = video.title || '';
-    iframeWrap.innerHTML = '<iframe src="https://www.youtube.com/embed/' + video.videoId + '?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+    iframeWrap.innerHTML = '<iframe src="https://www.youtube.com/embed/' + video.videoId + '?autoplay=1&rel=0&fs=0&modestbranding=1" allow="autoplay; encrypted-media"></iframe>';
 
     // ★ 즐겨찾기 버튼
     const star = window.SseukFav.makeStarButton(video);
