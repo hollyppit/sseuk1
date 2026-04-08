@@ -17,7 +17,12 @@ export async function onRequestPost(context) {
             });
         }
 
+        if (!env.YOUTUBE_API_KEY) {
+            return new Response(JSON.stringify({ error: 'YOUTUBE_API_KEY 미설정', videos: [] }), { status: 500, headers: corsHeaders });
+        }
+
         const videos = [];
+        const errors = [];
 
         for (const keyword of keywords.slice(0, 3)) {
             const url = new URL('https://www.googleapis.com/youtube/v3/search');
@@ -31,7 +36,9 @@ export async function onRequestPost(context) {
             const res = await fetch(url.toString());
 
             if (!res.ok) {
-                console.error('YouTube API error for keyword:', keyword, await res.text());
+                const errText = await res.text();
+                console.error('YouTube API error for keyword:', keyword, errText);
+                errors.push({ keyword, status: res.status, body: errText });
                 continue;
             }
 
@@ -50,7 +57,7 @@ export async function onRequestPost(context) {
             }
         }
 
-        return new Response(JSON.stringify({ videos }), { headers: corsHeaders });
+        return new Response(JSON.stringify({ videos, errors }), { headers: corsHeaders });
 
     } catch (err) {
         console.error('youtube function error:', err);
