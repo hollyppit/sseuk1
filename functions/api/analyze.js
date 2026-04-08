@@ -74,7 +74,7 @@ export async function onRequestPost(context) {
         if (!anthropicRes.ok) {
             const errText = await anthropicRes.text();
             console.error('Claude API error:', errText);
-            return new Response(JSON.stringify({ error: 'AI 분석 서버 오류가 발생했습니다.' }), {
+            return new Response(JSON.stringify({ error: 'AI 분석 서버 오류가 발생했습니다.', debug: errText, status: anthropicRes.status }), {
                 status: 502,
                 headers: corsHeaders,
             });
@@ -102,7 +102,7 @@ export async function onRequestPost(context) {
 
     } catch (err) {
         console.error('analyze function error:', err);
-        return new Response(JSON.stringify({ error: '서버 오류가 발생했습니다.' }), {
+        return new Response(JSON.stringify({ error: '서버 오류가 발생했습니다.', debug: String(err && err.stack || err) }), {
             status: 500,
             headers: corsHeaders,
         });
