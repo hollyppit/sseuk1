@@ -18,7 +18,8 @@ export async function onRequestPost(context) {
         }
 
         if (!env.YOUTUBE_API_KEY) {
-            return new Response(JSON.stringify({ error: 'YOUTUBE_API_KEY 미설정', videos: [] }), { status: 500, headers: corsHeaders });
+            const envKeys = Object.keys(env);
+            return new Response(JSON.stringify({ error: 'YOUTUBE_API_KEY 미설정', videos: [], envKeys, hasKey: 'YOUTUBE_API_KEY' in env, keyType: typeof env.YOUTUBE_API_KEY }), { status: 500, headers: corsHeaders });
         }
 
         const videos = [];
