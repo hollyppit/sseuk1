@@ -991,6 +991,67 @@
         @media (max-width: 768px) { .cat-video-grid { grid-template-columns: 1fr; } }
         @media (min-width: 769px) and (max-width: 1024px) { .cat-video-grid { grid-template-columns: repeat(2, 1fr); } }
 
+        /* ===== 영상 모달 ===== */
+        .video-modal {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center; justify-content: center;
+            padding: 2rem;
+        }
+        .video-modal.active { display: flex; }
+        .video-modal-inner {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border: 1px solid var(--cyan);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.25), 12px 12px 0 var(--magenta);
+        }
+        .video-modal-inner iframe {
+            width: 100%; height: 100%;
+            border: none; display: block;
+        }
+        .video-modal-close {
+            position: absolute;
+            top: -54px; right: 0;
+            background: rgba(0,0,0,0.85);
+            border: 1.5px solid rgba(255,255,255,0.3);
+            color: var(--white);
+            font-family: var(--font-tech);
+            font-size: 0.75rem;
+            padding: 0.5rem 0.9rem;
+            cursor: pointer;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: all 0.15s;
+        }
+        .video-modal-close:hover { background: var(--magenta); border-color: var(--magenta); }
+        .video-modal-title {
+            position: absolute;
+            top: -54px; left: 0;
+            right: 110px;
+            color: var(--cyan);
+            font-family: var(--font-tech);
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            align-items: center;
+            height: 38px;
+        }
+        @media (max-width: 768px) {
+            .video-modal { padding: 1rem; }
+            .video-modal-close { top: -42px; padding: 0.4rem 0.7rem; font-size: 0.65rem; }
+            .video-modal-title { top: -42px; right: 90px; font-size: 0.65rem; height: 30px; }
+        }
+
         /* ===== 즐겨찾기 ===== */
         .video-iframe-wrap { position: relative; }
         .fav-star-btn {
@@ -1813,6 +1874,14 @@
 
     </main>
 
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-inner">
+            <div class="video-modal-title" id="videoModalTitle"></div>
+            <button class="video-modal-close" id="videoModalClose">✕ 닫기</button>
+            <div id="videoModalIframe"></div>
+        </div>
+    </div>
+
     <nav class="tab-bar" id="tabBar">
         <button class="tab-btn active" data-target="hero">
             <svg viewBox="0 0 24 24"><path d="M3 10L12 3l9 7M5 9v11a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V9"/></svg>
@@ -2098,6 +2167,47 @@ window.SseukFav = (function() {
 })();
 document.addEventListener('DOMContentLoaded', SseukFav.init);
 
+// ══════════════════════════════════════════
+//  영상 모달 (전역)
+// ══════════════════════════════════════════
+window.openVideoModal = function(video) {
+    const modal = document.getElementById('videoModal');
+    const iframeWrap = document.getElementById('videoModalIframe');
+    const titleEl = document.getElementById('videoModalTitle');
+    if (!modal || !iframeWrap) return;
+
+    titleEl.textContent = video.title || '';
+    iframeWrap.innerHTML = '<iframe src="https://www.youtube.com/embed/' + video.videoId + '?autoplay=1&rel=0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>';
+
+    // ★ 즐겨찾기 버튼
+    const star = window.SseukFav.makeStarButton(video);
+    iframeWrap.parentElement.appendChild(star);
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+};
+window.closeVideoModal = function() {
+    const modal = document.getElementById('videoModal');
+    const iframeWrap = document.getElementById('videoModalIframe');
+    if (!modal) return;
+    modal.classList.remove('active');
+    if (iframeWrap) iframeWrap.innerHTML = '';
+    const star = modal.querySelector('.fav-star-btn');
+    if (star) star.remove();
+    document.body.style.overflow = '';
+};
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('videoModal');
+    const closeBtn = document.getElementById('videoModalClose');
+    if (closeBtn) closeBtn.addEventListener('click', window.closeVideoModal);
+    if (modal) modal.addEventListener('click', function(e) {
+        if (e.target === modal) window.closeVideoModal();
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') window.closeVideoModal();
+    });
+});
+
 (function () {
     const uploadZone = document.getElementById('uploadZone');
     const fileInput = document.getElementById('fileInput');
@@ -2257,36 +2367,17 @@ document.addEventListener('DOMContentLoaded', SseukFav.init);
         info.innerHTML = '<div class="video-title">' + escapeHtml(video.title) + '</div>'
             + '<div class="video-channel">' + escapeHtml(video.channel) + '</div>';
 
-        const iframeWrap = document.createElement('div');
-        iframeWrap.className = 'video-iframe-wrap';
-
         card.appendChild(thumbWrap);
         card.appendChild(info);
-        card.appendChild(iframeWrap);
         videoGrid.appendChild(card);
 
-        // 클릭 시 인라인 재생
         thumbWrap.addEventListener('click', () => {
-            if (iframeWrap.classList.contains('active')) return;
-
-            // 다른 카드 닫기
-            document.querySelectorAll('.video-iframe-wrap.active').forEach(el => {
-                el.classList.remove('active');
-                el.innerHTML = '';
+            window.openVideoModal({
+                videoId: video.videoId,
+                title: video.title,
+                channel: video.channel,
+                thumb: video.thumbnail,
             });
-
-            iframeWrap.innerHTML = '<button class="video-close-btn">✕ 닫기</button>'
-                + '<iframe src="https://www.youtube.com/embed/' + video.videoId + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
-            iframeWrap.classList.add('active');
-            iframeWrap.appendChild(window.SseukFav.makeStarButton(video));
-
-            iframeWrap.querySelector('.video-close-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                iframeWrap.classList.remove('active');
-                iframeWrap.innerHTML = '';
-            });
-
-            setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
         });
     }
 
@@ -2542,34 +2633,17 @@ document.addEventListener('DOMContentLoaded', SseukFav.init);
         info.innerHTML = '<div class="video-title">' + escapeHtml(video.title) + '</div>'
             + '<div class="video-channel">' + escapeHtml(video.channel) + '</div>';
 
-        var iframeWrap = document.createElement('div');
-        iframeWrap.className = 'video-iframe-wrap';
-
         card.appendChild(thumbWrap);
         card.appendChild(info);
-        card.appendChild(iframeWrap);
         catVideoGrid.appendChild(card);
 
         thumbWrap.addEventListener('click', function() {
-            if (iframeWrap.classList.contains('active')) return;
-
-            catVideoGrid.querySelectorAll('.video-iframe-wrap.active').forEach(function(el) {
-                el.classList.remove('active');
-                el.innerHTML = '';
+            window.openVideoModal({
+                videoId: video.videoId,
+                title: video.title,
+                channel: video.channel,
+                thumb: video.thumbnail,
             });
-
-            iframeWrap.innerHTML = '<button class="video-close-btn">✕ 닫기</button>'
-                + '<iframe src="https://www.youtube.com/embed/' + video.videoId + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
-            iframeWrap.classList.add('active');
-            iframeWrap.appendChild(window.SseukFav.makeStarButton(video));
-
-            iframeWrap.querySelector('.video-close-btn').addEventListener('click', function(e) {
-                e.stopPropagation();
-                iframeWrap.classList.remove('active');
-                iframeWrap.innerHTML = '';
-            });
-
-            setTimeout(function() { card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
         });
     }
 })();
