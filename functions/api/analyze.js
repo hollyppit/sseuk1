@@ -21,6 +21,55 @@ export async function onRequestPost(context) {
         const validMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         const resolvedMime = validMimeTypes.includes(mimeType) ? mimeType : 'image/jpeg';
 
+        const promptText = `당신은 미술 전문 AI 튜터입니다. 업로드된 그림을 분석해서 아래 형식으로 한국어 피드백을 제공해 주세요. 초보자가 읽기 쉽게, 친근하고 격려하는 톤으로 작성해 주세요.
+
+**전반적인 인상**
+(그림의 전체적 느낌과 수준 — 2~3문장)
+
+**잘된 점**
+(구체적으로 칭찬할 만한 요소 2가지)
+
+**주요 개선 포인트**
+1. (가장 중요한 개선점 — 구체적으로)
+2. (두 번째 개선점)
+3. (세 번째 개선점)
+
+**지금 바로 할 수 있는 연습**
+(초보자가 오늘 당장 실천할 수 있는 구체적 방법 1~2가지)
+
+마지막 줄에 반드시 아래 형식으로 이 그림의 약점 개선에 도움이 될 YouTube 검색 키워드 3개를 추가해 주세요. 한국어로 실제 유튜브에서 검색했을 때 좋은 강좌가 나올 만한 구체적인 검색어를 써주세요:
+[검색키워드: 키워드1|키워드2|키워드3]
+(예시: [검색키워드: 기초 드로잉 선 연습|인물화 얼굴 비례 잡기|명암 표현 방법])`;
+
+        async function callOpenAI() {
+            const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${env.OPENAI_API_KEY}`,
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    max_tokens: 1200,
+                    messages: [
+                        {
+                            role: 'user',
+                            content: [
+                                { type: 'text', text: promptText },
+                                { type: 'image_url', image_url: { url: `data:${resolvedMime};base64,${image}` } },
+                            ],
+                        },
+                    ],
+                }),
+            });
+            if (!res.ok) {
+                const t = await res.text();
+                throw new Error(`OpenAI ${res.status}: ${t}`);
+            }
+            const data = await res.json();
+            return data.choices?.[0]?.message?.content;
+        }
+
         const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
             method: 'POST',
             headers: {
@@ -43,45 +92,30 @@ export async function onRequestPost(context) {
                                     data: image,
                                 },
                             },
-                            {
-                                type: 'text',
-                                text: `당신은 미술 전문 AI 튜터입니다. 업로드된 그림을 분석해서 아래 형식으로 한국어 피드백을 제공해 주세요. 초보자가 읽기 쉽게, 친근하고 격려하는 톤으로 작성해 주세요.
-
-**전반적인 인상**
-(그림의 전체적 느낌과 수준 — 2~3문장)
-
-**잘된 점**
-(구체적으로 칭찬할 만한 요소 2가지)
-
-**주요 개선 포인트**
-1. (가장 중요한 개선점 — 구체적으로)
-2. (두 번째 개선점)
-3. (세 번째 개선점)
-
-**지금 바로 할 수 있는 연습**
-(초보자가 오늘 당장 실천할 수 있는 구체적 방법 1~2가지)
-
-마지막 줄에 반드시 아래 형식으로 이 그림의 약점 개선에 도움이 될 YouTube 검색 키워드 3개를 추가해 주세요. 한국어로 실제 유튜브에서 검색했을 때 좋은 강좌가 나올 만한 구체적인 검색어를 써주세요:
-[검색키워드: 키워드1|키워드2|키워드3]
-(예시: [검색키워드: 기초 드로잉 선 연습|인물화 얼굴 비례 잡기|명암 표현 방법])`,
-                            },
+                            { type: 'text', text: promptText },
                         ],
                     },
                 ],
             }),
         });
 
+        let feedback;
         if (!anthropicRes.ok) {
             const errText = await anthropicRes.text();
-            console.error('Claude API error:', errText);
-            return new Response(JSON.stringify({ error: 'AI 분석 서버 오류가 발생했습니다.', debug: errText, status: anthropicRes.status }), {
-                status: 502,
-                headers: corsHeaders,
-            });
+            console.error('Claude API error, falling back to OpenAI:', errText);
+            try {
+                feedback = await callOpenAI();
+            } catch (openaiErr) {
+                console.error('OpenAI fallback error:', openaiErr);
+                return new Response(JSON.stringify({ error: 'AI 분석 서버 오류가 발생했습니다.', debug: `claude:${errText} | openai:${String(openaiErr)}` }), {
+                    status: 502,
+                    headers: corsHeaders,
+                });
+            }
+        } else {
+            const anthropicData = await anthropicRes.json();
+            feedback = anthropicData.content?.[0]?.text;
         }
-
-        const anthropicData = await anthropicRes.json();
-        let feedback = anthropicData.content?.[0]?.text;
 
         if (!feedback) {
             return new Response(JSON.stringify({ error: '분석 결과를 가져올 수 없습니다.' }), {
