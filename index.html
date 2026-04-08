@@ -991,6 +991,202 @@
         @media (max-width: 768px) { .cat-video-grid { grid-template-columns: 1fr; } }
         @media (min-width: 769px) and (max-width: 1024px) { .cat-video-grid { grid-template-columns: repeat(2, 1fr); } }
 
+        /* ===== 즐겨찾기 ===== */
+        .video-iframe-wrap { position: relative; }
+        .fav-star-btn {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            z-index: 11;
+            width: 42px; height: 42px;
+            background: rgba(0,0,0,0.78);
+            border: 1.5px solid rgba(255,255,255,0.3);
+            color: var(--white);
+            font-family: var(--font-tech);
+            font-size: 0.65rem;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer;
+            line-height: 1;
+            gap: 2px;
+            letter-spacing: 0.04em;
+            transition: all 0.15s;
+        }
+        .fav-star-btn .fav-icon { font-size: 1.1rem; line-height: 1; }
+        .fav-star-btn:hover { background: var(--magenta); border-color: var(--magenta); transform: scale(1.06); }
+        .fav-star-btn.active { background: var(--magenta); border-color: var(--magenta); color: var(--white); }
+        .fav-star-btn.active .fav-icon { color: #fff; }
+
+        .section-saved {
+            padding: var(--section-pad);
+            background: #0a0a14;
+            position: relative;
+            z-index: 10;
+            border-top: 1px solid rgba(0, 212, 255, 0.15);
+        }
+        .saved-toolbar {
+            display: flex; align-items: center; gap: 0.75rem;
+            margin: 1rem 0 1.5rem;
+            flex-wrap: wrap;
+        }
+        .saved-breadcrumb {
+            flex: 1;
+            display: flex; align-items: center; gap: 0.4rem;
+            font-family: var(--font-tech);
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.05em;
+            min-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .saved-breadcrumb span { cursor: pointer; transition: color 0.2s; }
+        .saved-breadcrumb span:hover { color: var(--cyan); }
+        .saved-breadcrumb .bc-sep { color: rgba(255,255,255,0.2); cursor: default; }
+        .saved-breadcrumb .bc-current { color: var(--cyan); cursor: default; }
+
+        .btn-saved-tool {
+            padding: 0.5rem 0.9rem;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.25);
+            color: rgba(255,255,255,0.7);
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-saved-tool:hover { border-color: var(--cyan); color: var(--cyan); }
+        .btn-saved-tool.active { background: var(--magenta); border-color: var(--magenta); color: var(--white); }
+
+        .saved-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            min-height: 200px;
+        }
+        @media (max-width: 1024px) { .saved-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .saved-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .saved-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 1rem;
+            font-family: var(--font-tech);
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.05em;
+            line-height: 1.8;
+        }
+
+        .fav-folder {
+            background: rgba(10, 10, 32, 0.9);
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            padding: 1.5rem 0.8rem;
+            cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.5rem;
+            min-height: 150px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .fav-folder:hover { border-color: var(--cyan); transform: translateY(-2px); }
+        .fav-folder.drag-over { border-color: var(--magenta); background: rgba(255,0,127,0.06); }
+        .fav-folder-ico { color: var(--cyan); }
+        .fav-folder-name {
+            font-family: var(--font-kr);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.85);
+            text-align: center;
+            max-width: 100%;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .fav-folder-count {
+            font-family: var(--font-tech);
+            font-size: 0.6rem;
+            color: var(--magenta);
+            letter-spacing: 0.08em;
+        }
+        .fav-folder-name-input, .fav-card-title-input {
+            width: 100%;
+            padding: 0.3rem 0.4rem;
+            background: #000;
+            border: 1px solid var(--cyan);
+            color: var(--white);
+            font-family: var(--font-kr);
+            font-size: 0.8rem;
+            outline: none;
+            text-align: center;
+        }
+
+        .fav-card {
+            background: #000;
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .fav-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
+        .fav-card.dragging { opacity: 0.4; border-color: var(--magenta); }
+        .fav-thumb {
+            aspect-ratio: 16/9;
+            background: #111;
+            position: relative;
+            overflow: hidden;
+        }
+        .fav-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .fav-thumb::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%);
+        }
+        .fav-card-info { padding: 0.6rem 0.7rem 0.7rem; }
+        .fav-card-title {
+            font-family: var(--font-kr);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.9);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+        .fav-card-meta {
+            font-family: var(--font-tech);
+            font-size: 0.6rem;
+            color: var(--cyan);
+            margin-top: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .fav-edit-overlay {
+            position: absolute;
+            top: 0.4rem; right: 0.4rem;
+            z-index: 5;
+            display: none;
+            gap: 0.3rem;
+        }
+        .saved-grid.edit-mode .fav-edit-overlay { display: flex; }
+        .saved-grid.edit-mode .fav-card,
+        .saved-grid.edit-mode .fav-folder { cursor: grab; }
+        .saved-grid.edit-mode .fav-card:active,
+        .saved-grid.edit-mode .fav-folder:active { cursor: grabbing; }
+        .fav-edit-btn {
+            width: 28px; height: 28px;
+            background: rgba(0,0,0,0.85);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: var(--white);
+            font-family: var(--font-tech);
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s;
+        }
+        .fav-edit-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+        .fav-edit-btn.del:hover { border-color: var(--magenta); color: var(--magenta); }
+
         /* ===== 반응형 ===== */
         @media (max-width: 1024px) {
             .hero-typographic-cluster { width: 100%; }
@@ -1308,6 +1504,7 @@
             <div class="nav-dot" data-target="analyze"><span class="nav-dot-label">AI 분석</span></div>
             <div class="nav-dot" data-target="mentors"><span class="nav-dot-label">멘토</span></div>
             <div class="nav-dot" data-target="categories"><span class="nav-dot-label">카테고리</span></div>
+            <div class="nav-dot" data-target="saved"><span class="nav-dot-label">내 보드</span></div>
         </div>
         <a class="nav-mentor-btn" href="mentor.html" title="멘토 관리">
             <svg viewBox="0 0 20 20"><circle cx="10" cy="6" r="4"/><path d="M2 18c0-4 3.5-7 8-7s8 3 8 7"/><line x1="15" y1="3" x2="15" y2="9"/><line x1="12" y1="6" x2="18" y2="6"/></svg>
@@ -1346,6 +1543,11 @@
         <a class="dash-link" data-target="categories">
             <svg class="dash-link-icon" viewBox="0 0 20 20"><rect x="2" y="2" width="7" height="7" rx="1"/><rect x="11" y="2" width="7" height="7" rx="1"/><rect x="2" y="11" width="7" height="7" rx="1"/><rect x="11" y="11" width="7" height="7" rx="1"/></svg>
             <div>카테고리 영상<span class="dash-link-sub">Browse by Category</span></div>
+        </a>
+
+        <a class="dash-link" data-target="saved">
+            <svg class="dash-link-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="10,2 12.5,7.5 18,8.3 14,12.3 15,18 10,15.3 5,18 6,12.3 2,8.3 7.5,7.5"/></svg>
+            <div>내 보드<span class="dash-link-sub">Saved Videos</span></div>
         </a>
 
         <div class="dash-section-label">멘토 바로가기</div>
@@ -1538,9 +1740,285 @@
             </div>
         </section>
 
+        <section id="saved" class="section-saved">
+            <div class="section-header">
+                <div class="sys-label">MODULE_06: MY BOARD</div>
+            </div>
+            <h2 class="section-title">즐겨찾기<br>보드_</h2>
+            <p style="font-family: var(--font-kr); color: rgba(255,255,255,0.55); margin-top: 0.75rem; line-height: 1.6;">★ 버튼으로 모은 영상을 폴더로 정리하고 드래그로 자유롭게 배치하세요.</p>
+
+            <div class="saved-toolbar">
+                <div class="saved-breadcrumb" id="savedBreadcrumb"><span class="bc-current">전체</span></div>
+                <button class="btn-saved-tool" id="btnNewFolder">+ 새 폴더</button>
+                <button class="btn-saved-tool" id="btnEditMode">EDIT</button>
+            </div>
+            <div class="saved-grid" id="savedGrid"></div>
+        </section>
+
     </main>
 
 <script>
+// ══════════════════════════════════════════
+//  즐겨찾기 보드 (localStorage)
+// ══════════════════════════════════════════
+window.SseukFav = (function() {
+    const STORAGE_KEY = 'sseuk_favorites_v1';
+    let items = [];
+    let editMode = false;
+    let currentFolder = null;
+    let dragIdx = null;
+
+    function load() {
+        try { items = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { items = []; }
+    }
+    function save() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+    function isFav(id) { return items.some(f => f.id === id && f.type !== 'folder'); }
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+    function toggle(item) {
+        if (isFav(item.id)) {
+            items = items.filter(f => f.id !== item.id);
+            save(); render();
+            return false;
+        }
+        items.push({
+            id: item.id,
+            type: 'video',
+            title: item.title,
+            channel: item.channel || '',
+            thumb: item.thumb,
+            videoId: item.videoId,
+            folderId: null,
+            order: items.length,
+        });
+        save(); render();
+        return true;
+    }
+
+    function remove(id) {
+        const target = items.find(f => f.id === id);
+        if (target && target.type === 'folder') {
+            // 폴더 삭제 시 안의 항목들은 부모로 이동
+            items.forEach(f => { if (f.folderId === id) f.folderId = target.folderId || null; });
+        }
+        items = items.filter(f => f.id !== id);
+        save(); render();
+    }
+
+    function createFolder() {
+        const num = items.filter(f => f.type === 'folder').length + 1;
+        items.push({
+            id: 'folder-' + Date.now(),
+            type: 'folder',
+            name: '새 폴더 ' + num,
+            folderId: currentFolder,
+            order: items.length,
+        });
+        save(); render();
+    }
+
+    function openFolder(id) {
+        currentFolder = id;
+        editMode = false;
+        const btn = document.getElementById('btnEditMode');
+        if (btn) { btn.classList.remove('active'); btn.textContent = 'EDIT'; }
+        render();
+    }
+
+    function goToRoot() { currentFolder = null; render(); }
+
+    function toggleEditMode() {
+        editMode = !editMode;
+        const btn = document.getElementById('btnEditMode');
+        const grid = document.getElementById('savedGrid');
+        if (!btn || !grid) return;
+        if (editMode) { btn.classList.add('active'); btn.textContent = 'DONE'; grid.classList.add('edit-mode'); }
+        else { btn.classList.remove('active'); btn.textContent = 'EDIT'; grid.classList.remove('edit-mode'); }
+        render();
+    }
+
+    function renderBreadcrumb() {
+        const el = document.getElementById('savedBreadcrumb');
+        if (!el) return;
+        if (!currentFolder) { el.innerHTML = '<span class="bc-current">전체</span>'; return; }
+        const chain = [];
+        let cur = items.find(f => f.id === currentFolder);
+        while (cur) { chain.unshift(cur); cur = cur.folderId ? items.find(f => f.id === cur.folderId) : null; }
+        let html = '<span onclick="SseukFav.goToRoot()">전체</span>';
+        chain.forEach((f, i) => {
+            html += '<span class="bc-sep">/</span>';
+            if (i === chain.length - 1) html += '<span class="bc-current">' + esc(f.name) + '</span>';
+            else html += '<span onclick="SseukFav.openFolder(\'' + f.id + '\')">' + esc(f.name) + '</span>';
+        });
+        el.innerHTML = html;
+    }
+
+    function render() {
+        renderBreadcrumb();
+        const grid = document.getElementById('savedGrid');
+        if (!grid) return;
+
+        const list = items
+            .filter(f => (f.folderId || null) === currentFolder)
+            .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+        if (!list.length) {
+            grid.innerHTML = '<div class="saved-empty">' +
+                (currentFolder ? '이 폴더는 비어있어요<br>EDIT 모드에서 영상을 드래그해 옮겨보세요'
+                               : '아직 즐겨찾기한 영상이 없어요<br>영상 재생 중 ★ 버튼을 눌러 추가하세요') +
+                '</div>';
+            // sync 별 표시 상태
+            syncStarButtons();
+            return;
+        }
+
+        grid.innerHTML = list.map((item, idx) => {
+            if (item.type === 'folder') {
+                const childCount = items.filter(f => f.folderId === item.id).length;
+                return '<div class="fav-folder" draggable="' + editMode + '" data-idx="' + idx + '" data-id="' + item.id + '"' +
+                    (editMode ? ' ondragstart="SseukFav._dragStart(event,' + idx + ')" ondragover="SseukFav._dragOver(event,this)" ondragleave="this.classList.remove(\'drag-over\')" ondrop="SseukFav._drop(event,' + idx + ',this)"' : '') +
+                    ' onclick="' + (editMode ? '' : 'SseukFav.openFolder(\'' + item.id + '\')') + '">' +
+                        '<div class="fav-edit-overlay">' +
+                            '<button class="fav-edit-btn" onclick="event.stopPropagation();SseukFav._startRename(\'' + item.id + '\',\'folder\')" title="이름 변경">✎</button>' +
+                            '<button class="fav-edit-btn del" onclick="event.stopPropagation();SseukFav.remove(\'' + item.id + '\')" title="삭제">✕</button>' +
+                        '</div>' +
+                        '<div class="fav-folder-ico"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>' +
+                        '<div class="fav-folder-name" id="fname-' + item.id + '">' + esc(item.name) + '</div>' +
+                        '<div class="fav-folder-count">' + childCount + ' ITEMS</div>' +
+                    '</div>';
+            } else {
+                return '<div class="fav-card" draggable="' + editMode + '" data-idx="' + idx + '" data-id="' + item.id + '"' +
+                    (editMode ? ' ondragstart="SseukFav._dragStart(event,' + idx + ')" ondragover="SseukFav._dragOver(event,this)" ondragleave="this.classList.remove(\'drag-over\')" ondrop="SseukFav._drop(event,' + idx + ',this)"' : '') +
+                    ' onclick="' + (editMode ? '' : 'SseukFav._play(\'' + item.id + '\')') + '">' +
+                        '<div class="fav-edit-overlay">' +
+                            '<button class="fav-edit-btn del" onclick="event.stopPropagation();SseukFav.remove(\'' + item.id + '\')" title="즐겨찾기 해제">✕</button>' +
+                        '</div>' +
+                        '<div class="fav-thumb"><img src="' + esc(item.thumb) + '" alt="" loading="lazy"></div>' +
+                        '<div class="fav-card-info">' +
+                            '<div class="fav-card-title" id="ftitle-' + item.id + '">' + esc(item.title) + '</div>' +
+                            '<div class="fav-card-meta">' + esc(item.channel) + '</div>' +
+                        '</div>' +
+                    '</div>';
+            }
+        }).join('');
+
+        syncStarButtons();
+    }
+
+    function _dragStart(e, idx) {
+        dragIdx = idx;
+        e.dataTransfer.effectAllowed = 'move';
+        const el = e.target.closest('.fav-card,.fav-folder');
+        if (el) setTimeout(() => el.classList.add('dragging'), 0);
+    }
+    function _dragOver(e, el) { e.preventDefault(); el.classList.add('drag-over'); }
+    function _drop(e, targetIdx, el) {
+        e.preventDefault();
+        el.classList.remove('drag-over');
+        const list = items
+            .filter(f => (f.folderId || null) === currentFolder)
+            .sort((a, b) => (a.order || 0) - (b.order || 0));
+        if (dragIdx === null || dragIdx === targetIdx) { dragIdx = null; return; }
+        const dragged = list[dragIdx];
+        const target = list[targetIdx];
+
+        if (target && target.type === 'folder' && dragged.id !== target.id) {
+            // 폴더 안으로 이동
+            const orig = items.find(f => f.id === dragged.id);
+            if (orig) { orig.folderId = target.id; save(); render(); dragIdx = null; return; }
+        }
+
+        // 순서 변경
+        const moved = list.splice(dragIdx, 1)[0];
+        list.splice(targetIdx, 0, moved);
+        list.forEach((it, i) => {
+            const orig = items.find(f => f.id === it.id);
+            if (orig) orig.order = i;
+        });
+        save(); render();
+        dragIdx = null;
+    }
+
+    function _startRename(id, type) {
+        const item = items.find(f => f.id === id);
+        if (!item) return;
+        const elId = type === 'folder' ? 'fname-' + id : 'ftitle-' + id;
+        const el = document.getElementById(elId);
+        if (!el) return;
+        const cls = type === 'folder' ? 'fav-folder-name-input' : 'fav-card-title-input';
+        const val = type === 'folder' ? item.name : item.title;
+        el.outerHTML = '<input class="' + cls + '" id="' + elId + '" value="' + esc(val) + '" onclick="event.stopPropagation()" onblur="SseukFav._finishRename(\'' + id + '\',\'' + type + '\',this.value)" onkeydown="if(event.key===\'Enter\')this.blur()">';
+        const inp = document.getElementById(elId);
+        if (inp) { inp.focus(); inp.select(); }
+    }
+    function _finishRename(id, type, value) {
+        const item = items.find(f => f.id === id);
+        if (!item) return;
+        const v = (value || '').trim();
+        if (type === 'folder') item.name = v || item.name;
+        else item.title = v || item.title;
+        save(); render();
+    }
+
+    function _play(id) {
+        const item = items.find(f => f.id === id);
+        if (!item || item.type === 'folder') return;
+        // 새 창으로 유튜브 열기
+        window.open('https://www.youtube.com/watch?v=' + item.videoId, '_blank');
+    }
+
+    // 영상 카드의 ★ 버튼 상태를 현재 favorites와 동기화
+    function syncStarButtons() {
+        document.querySelectorAll('.fav-star-btn[data-fav-id]').forEach(btn => {
+            const id = btn.getAttribute('data-fav-id');
+            if (isFav(id)) { btn.classList.add('active'); btn.querySelector('.fav-icon').textContent = '★'; }
+            else { btn.classList.remove('active'); btn.querySelector('.fav-icon').textContent = '☆'; }
+        });
+    }
+
+    // iframe 안에 ★ 버튼 만들기
+    function makeStarButton(video) {
+        const id = 'yt-' + video.videoId;
+        const btn = document.createElement('button');
+        btn.className = 'fav-star-btn';
+        btn.setAttribute('data-fav-id', id);
+        btn.title = '즐겨찾기';
+        btn.innerHTML = '<span class="fav-icon">' + (isFav(id) ? '★' : '☆') + '</span><span>SAVE</span>';
+        if (isFav(id)) btn.classList.add('active');
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const added = toggle({
+                id: id,
+                title: video.title,
+                channel: video.channel,
+                thumb: video.thumbnail || video.thumb,
+                videoId: video.videoId,
+            });
+            if (added) { btn.classList.add('active'); btn.querySelector('.fav-icon').textContent = '★'; }
+            else { btn.classList.remove('active'); btn.querySelector('.fav-icon').textContent = '☆'; }
+        });
+        return btn;
+    }
+
+    function init() {
+        load();
+        const newFolderBtn = document.getElementById('btnNewFolder');
+        const editBtn = document.getElementById('btnEditMode');
+        if (newFolderBtn) newFolderBtn.addEventListener('click', createFolder);
+        if (editBtn) editBtn.addEventListener('click', toggleEditMode);
+        render();
+    }
+
+    return {
+        init, isFav, toggle, remove, createFolder, openFolder, goToRoot,
+        toggleEditMode, render, makeStarButton, syncStarButtons,
+        _dragStart, _dragOver, _drop, _startRename, _finishRename, _play,
+    };
+})();
+document.addEventListener('DOMContentLoaded', SseukFav.init);
+
 (function () {
     const uploadZone = document.getElementById('uploadZone');
     const fileInput = document.getElementById('fileInput');
@@ -1721,6 +2199,7 @@
             iframeWrap.innerHTML = '<button class="video-close-btn">✕ 닫기</button>'
                 + '<iframe src="https://www.youtube.com/embed/' + video.videoId + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
             iframeWrap.classList.add('active');
+            iframeWrap.appendChild(window.SseukFav.makeStarButton(video));
 
             iframeWrap.querySelector('.video-close-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -1994,6 +2473,7 @@
             iframeWrap.innerHTML = '<button class="video-close-btn">✕ 닫기</button>'
                 + '<iframe src="https://www.youtube.com/embed/' + video.videoId + '?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
             iframeWrap.classList.add('active');
+            iframeWrap.appendChild(window.SseukFav.makeStarButton(video));
 
             iframeWrap.querySelector('.video-close-btn').addEventListener('click', function(e) {
                 e.stopPropagation();
